@@ -1,0 +1,1110 @@
+{% comment %} VISRIVA Premium T-Shirt Customizer {% endcomment %}
+
+{{ 'visriva-uploader.js' | asset_url | script_tag }}
+{{ 'fabric.min.js' | asset_url | script_tag }}
+
+<style>
+  /* === VISRIVA Premium Customizer Styles === */
+  .visriva-customizer {
+    --v-primary: #ff6b35;
+    --v-primary-dark: #e55a28;
+    --v-bg-dark: #0a0a0a;
+    --v-bg-card: #1a1a2e;
+    --v-text: #ffffff;
+    --v-text-muted: #a0a0b0;
+    --v-border: rgba(255,255,255,0.1);
+    --v-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+  }
+
+  .visriva-customizer {
+    background: var(--v-gradient);
+    border-radius: 24px;
+    padding: 2.5rem;
+    margin: 2rem 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--v-text);
+  }
+
+  .customizer-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .customizer-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #ffffff 0%, #ff6b35 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .customizer-header p {
+    color: var(--v-text-muted);
+    font-size: 0.95rem;
+  }
+
+  .customizer-grid {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  @media (max-width: 1024px) {
+    .customizer-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* === Preview Section === */
+  .preview-section {
+    position: relative;
+  }
+
+  .preview-container {
+    background: linear-gradient(145deg, #12121f 0%, #1a1a2e 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--v-border);
+  }
+
+  .preview-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,107,53,0.5), transparent);
+  }
+
+  .canvas-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+    aspect-ratio: 1;
+  }
+
+  #tshirt-canvas {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+  }
+
+  .preview-controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .preview-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    border: 1px solid var(--v-border);
+    background: rgba(255,255,255,0.05);
+    color: var(--v-text);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .preview-btn:hover {
+    background: rgba(255,107,53,0.1);
+    border-color: var(--v-primary);
+  }
+
+  .preview-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* === Upload Section === */
+  .upload-section {
+    margin-bottom: 2rem;
+  }
+
+  .section-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--v-text-muted);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .section-title svg {
+    width: 16px;
+    height: 16px;
+    color: var(--v-primary);
+  }
+
+  .upload-zone {
+    border: 2px dashed rgba(255,107,53,0.3);
+    border-radius: 16px;
+    padding: 2.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: rgba(255,255,255,0.02);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .upload-zone:hover {
+    border-color: var(--v-primary);
+    background: rgba(255,107,53,0.05);
+  }
+
+  .upload-zone.dragover {
+    border-color: var(--v-primary);
+    background: rgba(255,107,53,0.1);
+    transform: scale(1.02);
+  }
+
+  .upload-zone.has-design {
+    border-style: solid;
+    border-color: var(--v-primary);
+  }
+
+  .upload-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1rem;
+    background: linear-gradient(135deg, var(--v-primary) 0%, #f72585 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .upload-icon svg {
+    width: 32px;
+    height: 32px;
+    color: white;
+  }
+
+  .upload-zone h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .upload-zone p {
+    color: var(--v-text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .upload-formats {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .format-badge {
+    padding: 0.35rem 0.75rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 6px;
+    font-size: 0.75rem;
+    color: var(--v-text-muted);
+    font-weight: 500;
+  }
+
+  .upload-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  /* === Color Selection === */
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.75rem;
+  }
+
+  .color-swatch {
+    aspect-ratio: 1;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    border: 2px solid transparent;
+    overflow: hidden;
+  }
+
+  .color-swatch::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .color-swatch:hover::before {
+    opacity: 1;
+  }
+
+  .color-swatch.active {
+    border-color: var(--v-primary);
+    box-shadow: 0 0 0 3px rgba(255,107,53,0.3);
+    transform: scale(1.1);
+  }
+
+  .color-swatch.active::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E") center/contain no-repeat;
+  }
+
+  .color-swatch[data-color="#ffffff"]::after {
+    filter: invert(1);
+  }
+
+  .color-label {
+    text-align: center;
+    font-size: 0.7rem;
+    color: var(--v-text-muted);
+    margin-top: 0.35rem;
+  }
+
+  /* === GSM Selector === */
+  .gsm-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+
+  .gsm-option {
+    padding: 1.25rem 1rem;
+    border-radius: 14px;
+    border: 1px solid var(--v-border);
+    background: rgba(255,255,255,0.02);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+
+  .gsm-option:hover {
+    border-color: rgba(255,107,53,0.5);
+    background: rgba(255,107,53,0.05);
+  }
+
+  .gsm-option.active {
+    border-color: var(--v-primary);
+    background: linear-gradient(135deg, rgba(255,107,53,0.15) 0%, rgba(247,37,133,0.1) 100%);
+  }
+
+  .gsm-option .gsm-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--v-text);
+    margin-bottom: 0.25rem;
+  }
+
+  .gsm-option .gsm-label {
+    font-size: 0.75rem;
+    color: var(--v-text-muted);
+  }
+
+  .gsm-option.active .gsm-label {
+    color: var(--v-primary);
+  }
+
+  .gsm-option .gsm-badge {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    background: linear-gradient(135deg, var(--v-primary) 0%, #f72585 100%);
+    border-radius: 4px;
+    font-size: 0.65rem;
+    color: white;
+    font-weight: 600;
+    margin-top: 0.5rem;
+  }
+
+  /* === Size Selector === */
+  .size-options {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+  }
+
+  .size-option {
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid var(--v-border);
+    background: rgba(255,255,255,0.02);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .size-option:hover {
+    border-color: rgba(255,107,53,0.5);
+    background: rgba(255,107,53,0.05);
+  }
+
+  .size-option.active {
+    border-color: var(--v-primary);
+    background: linear-gradient(135deg, var(--v-primary) 0%, #f72585 100%);
+    color: white;
+  }
+
+  /* === Controls Section === */
+  .controls-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--v-border);
+  }
+
+  .price-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .price-label {
+    font-size: 0.9rem;
+    color: var(--v-text-muted);
+  }
+
+  .price-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--v-text);
+  }
+
+  .price-value span {
+    font-size: 1rem;
+    color: var(--v-text-muted);
+    font-weight: 400;
+  }
+
+  .action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .btn {
+    padding: 1rem 1.5rem;
+    border-radius: 14px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: none;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--v-primary) 0%, #f72585 100%);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(255,107,53,0.3);
+  }
+
+  .btn-secondary {
+    background: rgba(255,255,255,0.05);
+    color: var(--v-text);
+    border: 1px solid var(--v-border);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.2);
+  }
+
+  .btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* === Design Info === */
+  .design-info {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(255,255,255,0.02);
+    border-radius: 12px;
+    display: none;
+  }
+
+  .design-info.visible {
+    display: block;
+  }
+
+  .design-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .design-info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .design-info-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255,107,53,0.1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--v-primary);
+  }
+
+  .design-info-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .design-info-text {
+    flex: 1;
+  }
+
+  .design-info-label {
+    font-size: 0.7rem;
+    color: var(--v-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .design-info-value {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  /* === Premium Badge === */
+  .premium-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, rgba(255,107,53,0.15) 0%, rgba(247,37,133,0.1) 100%);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    color: var(--v-primary);
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .premium-badge svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* === Mobile Responsive === */
+  @media (max-width: 768px) {
+    .visriva-customizer {
+      padding: 1.5rem;
+      border-radius: 16px;
+    }
+
+    .customizer-header h2 {
+      font-size: 1.5rem;
+    }
+
+    .color-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .gsm-options {
+      grid-template-columns: 1fr;
+    }
+
+    .size-options {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .action-buttons {
+      grid-template-columns: 1fr;
+    }
+
+    .price-value {
+      font-size: 1.75rem;
+    }
+  }
+
+  /* === Loading State === */
+  .upload-loading {
+    position: absolute;
+    inset: 0;
+    background: rgba(10,10,10,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .upload-loading.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--v-border);
+    border-top-color: var(--v-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+</style>
+
+<div class="visriva-customizer" id="visriva-customizer-{{ product.id }}">
+  <div class="customizer-header">
+    <div class="premium-badge">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+      Premium Customization
+    </div>
+    <h2>Design Your Tee</h2>
+    <p>Upload your artwork and create a unique piece</p>
+  </div>
+
+  <div class="customizer-grid">
+    <!-- Preview Section -->
+    <div class="preview-section">
+      <div class="preview-container">
+        <div class="canvas-wrapper">
+          <canvas id="tshirt-canvas-{{ product.id }}"></canvas>
+        </div>
+        <div class="preview-controls">
+          <button class="preview-btn" onclick="resetDesign{{ product.id }}()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            Reset
+          </button>
+          <button class="preview-btn" onclick="zoomIn{{ product.id }}()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+            Zoom
+          </button>
+        </div>
+      </div>
+
+      <!-- Design Info -->
+      <div class="design-info" id="design-info-{{ product.id }}">
+        <div class="design-info-grid">
+          <div class="design-info-item">
+            <div class="design-info-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+            <div class="design-info-text">
+              <div class="design-info-label">File</div>
+              <div class="design-info-value" id="file-name-{{ product.id }}">-</div>
+            </div>
+          </div>
+          <div class="design-info-item">
+            <div class="design-info-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <div class="design-info-text">
+              <div class="design-info-label">Size</div>
+              <div class="design-info-value" id="file-size-{{ product.id }}">-</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls Section -->
+    <div class="controls-section">
+      <!-- File Upload -->
+      <div class="upload-section">
+        <div class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload Design
+        </div>
+        <div class="upload-zone" id="upload-zone-{{ product.id }}">
+          <div class="upload-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </div>
+          <h4>Drop your design here</h4>
+          <p>or click to browse files</p>
+          <div class="upload-formats">
+            <span class="format-badge">PNG</span>
+            <span class="format-badge">SVG</span>
+            <span class="format-badge">PDF</span>
+            <span class="format-badge">JPG</span>
+          </div>
+          <input type="file" id="file-input-{{ product.id }}" accept=".png,.jpg,.jpeg,.svg,.pdf">
+          <div class="upload-loading" id="upload-loading-{{ product.id }}">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Color Selection -->
+      <div class="upload-section">
+        <div class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+          T-Shirt Color
+        </div>
+        <div class="color-grid">
+          <div class="color-swatch active" data-color="#ffffff" style="background: #ffffff;" title="White"></div>
+          <div class="color-swatch" data-color="#0a0a0a" style="background: #0a0a0a;" title="Black"></div>
+          <div class="color-swatch" data-color="#1e3a5f" style="background: #1e3a5f;" title="Navy"></div>
+          <div class="color-swatch" data-color="#1a472a" style="background: #1a472a;" title="Forest"></div>
+          <div class="color-swatch" data-color="#2c3e50" style="background: #2c3e50;" title="Charcoal"></div>
+          <div class="color-swatch" data-color="#4a3728" style="background: #4a3728;" title="Brown"></div>
+          <div class="color-swatch" data-color="#8e2942" style="background: #8e2942;" title="Maroon"></div>
+          <div class="color-swatch" data-color="#1a3a4a" style="background: #1a3a4a;" title="Teal"></div>
+          <div class="color-swatch" data-color="#c0392b" style="background: #c0392b;" title="Red"></div>
+          <div class="color-swatch" data-color="#2980b9" style="background: #2980b9;" title="Royal Blue"></div>
+          <div class="color-swatch" data-color="#8e44ad" style="background: #8e44ad;" title="Purple"></div>
+          <div class="color-swatch" data-color="#f39c12" style="background: #f39c12;" title="Mustard"></div>
+        </div>
+        <div class="color-label" id="color-label-{{ product.id }}">White</div>
+      </div>
+
+      <!-- GSM Selector -->
+      <div class="upload-section">
+        <div class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Fabric Weight (GSM)
+        </div>
+        <div class="gsm-options">
+          <div class="gsm-option" data-gsm="180">
+            <div class="gsm-value">180</div>
+            <div class="gsm-label">Standard</div>
+          </div>
+          <div class="gsm-option active" data-gsm="220">
+            <div class="gsm-value">220</div>
+            <div class="gsm-label">Premium</div>
+            <span class="gsm-badge">Popular</span>
+          </div>
+          <div class="gsm-option" data-gsm="240">
+            <div class="gsm-value">240</div>
+            <div class="gsm-label">Heavyweight</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Size Selector -->
+      <div class="upload-section">
+        <div class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Size
+        </div>
+        <div class="size-options">
+          <div class="size-option" data-size="S">S</div>
+          <div class="size-option active" data-size="M">M</div>
+          <div class="size-option" data-size="L">L</div>
+          <div class="size-option" data-size="XL">XL</div>
+          <div class="size-option" data-size="XXL">XXL</div>
+        </div>
+      </div>
+
+      <!-- Price & Actions -->
+      <div class="price-display">
+        <div>
+          <div class="price-label">Total Price</div>
+          <div class="price-value" id="total-price-{{ product.id }}">₹900 <span>+ ₹200 custom</span></div>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn btn-primary" onclick="addToCart{{ product.id }}()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          Add to Cart
+        </button>
+        <button class="btn btn-secondary" onclick="saveDesign{{ product.id }}()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save Design
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const productId = '{{ product.id }}';
+  const canvasId = 'tshirt-canvas-' + productId;
+  let fabricCanvas;
+  let currentDesign = null;
+  let selectedColor = '#ffffff';
+  let selectedGSM = 220;
+  let selectedSize = 'M';
+
+  // Initialize Fabric.js canvas
+  function initCanvas() {
+    const canvasEl = document.getElementById(canvasId);
+    const wrapper = canvasEl.parentElement;
+
+    fabricCanvas = new fabric.Canvas(canvasId, {
+      width: wrapper.offsetWidth,
+      height: wrapper.offsetWidth,
+      backgroundColor: 'transparent',
+      selection: true
+    });
+
+    drawTshirt();
+
+    // Handle resize
+    window.addEventListener('resize', () => {
+      const width = wrapper.offsetWidth;
+      fabricCanvas.setDimensions({ width, height: width });
+      fabricCanvas.renderAll();
+    });
+  }
+
+  // Draw t-shirt base
+  function drawTshirt() {
+    const size = fabricCanvas.width;
+    const centerX = size / 2;
+    const centerY = size / 2;
+
+    // T-shirt body
+    const tshirtPath = new fabric.Path(createTshirtPath(size), {
+      fill: selectedColor,
+      stroke: 'rgba(0,0,0,0.1)',
+      strokeWidth: 1,
+      selectable: false,
+      evented: false
+    });
+
+    fabricCanvas.add(tshirtPath);
+
+    // Collar
+    const collarPath = new fabric.Path(createCollarPath(size), {
+      fill: adjustColor(selectedColor, -10),
+      stroke: 'rgba(0,0,0,0.15)',
+      strokeWidth: 1,
+      selectable: false,
+      evented: false
+    });
+
+    fabricCanvas.add(collarPath);
+    fabricCanvas.sendToBack(tshirtPath);
+    fabricCanvas.sendToBack(collarPath);
+
+    fabricCanvas.renderAll();
+  }
+
+  // Create t-shirt SVG path
+  function createTshirtPath(size) {
+    const s = size * 0.15;
+    return `
+      M ${s * 2.5} ${s * 0.8}
+      Q ${s * 3} ${s * 0.5} ${s * 4} ${s * 0.8}
+      L ${s * 4.5} ${s * 1.5}
+      Q ${s * 4.8} ${s * 2} ${s * 5} ${s * 3}
+      L ${s * 4.2} ${s * 7}
+      Q ${s * 4.1} ${s * 8} ${s * 3.5} ${s * 9}
+      L ${s * 6.5} ${s * 9}
+      Q ${s * 7} ${s * 8} ${s * 6.8} ${s * 7}
+      L ${s * 7.5} ${s * 3}
+      Q ${s * 7.7} ${s * 2} ${s * 8} ${s * 1.5}
+      L ${s * 8.5} ${s * 0.8}
+      Q ${s * 9} ${s * 0.5} ${s * 9.5} ${s * 0.8}
+      Q ${s * 10} ${s * 1} ${s * 9.5} ${s * 1.5}
+      L ${s * 8} ${s * 1.5}
+      Q ${s * 7.5} ${s * 2} ${s * 7.2} ${s * 4}
+      L ${s * 6.5} ${s * 9}
+      Q ${s * 6.4} ${s * 9.5} ${s * 5} ${s * 9.5}
+      L ${s * 5} ${s * 9.5}
+      Q ${s * 4.6} ${s * 9.5} ${s * 4.3} ${s * 9}
+      L ${s * 2.7} ${s * 4}
+      Q ${s * 2.5} ${s * 2} ${s * 2} ${s * 1.5}
+      L ${s * 1.5} ${s * 0.8}
+      Q ${s * 1} ${s * 0.5} ${s * 1.5} ${s * 0.8}
+      Q ${s * 2} ${s * 1} ${s * 2.5} ${s * 0.8}
+      Z
+    `;
+  }
+
+  // Create collar path
+  function createCollarPath(size) {
+    const s = size * 0.15;
+    return `
+      M ${s * 3.2} ${s * 1.2}
+      Q ${s * 5} ${s * 2} ${s * 6.8} ${s * 1.2}
+      Q ${s * 6.5} ${s * 1.8} ${s * 5} ${s * 2.5}
+      Q ${s * 3.5} ${s * 1.8} ${s * 3.2} ${s * 1.2}
+      Z
+    `;
+  }
+
+  // Adjust color brightness
+  function adjustColor(color, amount) {
+    let hex = color.replace('#', '');
+    let r = parseInt(hex.substr(0, 2), 16);
+    let g = parseInt(hex.substr(2, 2), 16);
+    let b = parseInt(hex.substr(4, 2), 16);
+    r = Math.max(0, Math.min(255, r + amount));
+    g = Math.max(0, Math.min(255, g + amount));
+    b = Math.max(0, Math.min(255, b + amount));
+    return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+  }
+
+  // File upload handling
+  const uploadZone = document.getElementById('upload-zone-' + productId);
+  const fileInput = document.getElementById('file-input-' + productId);
+
+  uploadZone.addEventListener('click', () => fileInput.click());
+
+  uploadZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadZone.classList.add('dragover');
+  });
+
+  uploadZone.addEventListener('dragleave', () => {
+    uploadZone.classList.remove('dragover');
+  });
+
+  uploadZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadZone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  });
+
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) handleFile(file);
+  });
+
+  function handleFile(file) {
+    const loadingEl = document.getElementById('upload-loading-' + productId);
+    loadingEl.classList.add('active');
+
+    const validTypes = ['image/png', 'image/jpeg', 'image/svg+xml', 'application/pdf'];
+    if (!validTypes.includes(file.type)) {
+      alert('Please upload a PNG, JPG, SVG, or PDF file.');
+      loadingEl.classList.remove('active');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        addDesignToCanvas(img, file.name, formatFileSize(file.size));
+        loadingEl.classList.remove('active');
+        uploadZone.classList.add('has-design');
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / 1048576).toFixed(1) + ' MB';
+  }
+
+  function addDesignToCanvas(img, fileName, fileSize) {
+    // Remove existing design
+    fabricCanvas.getObjects().forEach(obj => {
+      if (obj.label === 'userDesign') {
+        fabricCanvas.remove(obj);
+      }
+    });
+
+    // Calculate design size (centered, ~25% of canvas)
+    const maxSize = fabricCanvas.width * 0.35;
+    const scale = Math.min(maxSize / img.width, maxSize / img.height);
+
+    const design = new fabric.Image(img, {
+      left: fabricCanvas.width / 2,
+      top: fabricCanvas.height * 0.42,
+      originX: 'center',
+      originY: 'center',
+      scaleX: scale,
+      scaleY: scale,
+      angle: 0,
+      selectable: true,
+      hasControls: true,
+      hasBorders: true,
+      borderColor: '#ff6b35',
+      cornerColor: '#ff6b35',
+      cornerSize: 10,
+      transparentCorners: false,
+      label: 'userDesign'
+    });
+
+    // Add slight rotation for realistic placement
+    design.setControlsVisibility({
+      mt: false, mb: false, ml: false, mr: false
+    });
+
+    fabricCanvas.add(design);
+    fabricCanvas.setActiveObject(design);
+    fabricCanvas.renderAll();
+
+    // Update design info
+    document.getElementById('file-name-' + productId).textContent = fileName;
+    document.getElementById('file-size-' + productId).textContent = fileSize;
+    document.getElementById('design-info-' + productId).classList.add('visible');
+  }
+
+  // Color selection
+  document.querySelectorAll('.color-swatch').forEach(swatch => {
+    swatch.addEventListener('click', () => {
+      document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+      swatch.classList.add('active');
+
+      selectedColor = swatch.dataset.color;
+      document.getElementById('color-label-' + productId).textContent = swatch.title;
+
+      // Update t-shirt color
+      fabricCanvas.getObjects().forEach(obj => {
+        if (obj.type === 'path' && !obj.label) {
+          obj.set('fill', selectedColor);
+        }
+      });
+      fabricCanvas.renderAll();
+    });
+  });
+
+  // GSM selection
+  document.querySelectorAll('.gsm-option').forEach(option => {
+    option.addEventListener('click', () => {
+      document.querySelectorAll('.gsm-option').forEach(o => o.classList.remove('active'));
+      option.classList.add('active');
+      selectedGSM = parseInt(option.dataset.gsm);
+      updatePrice();
+    });
+  });
+
+  // Size selection
+  document.querySelectorAll('.size-option').forEach(option => {
+    option.addEventListener('click', () => {
+      document.querySelectorAll('.size-option').forEach(o => o.classList.remove('active'));
+      option.classList.add('active');
+      selectedSize = option.dataset.size;
+    });
+  });
+
+  function updatePrice() {
+    const basePrice = 900;
+    const customFee = currentDesign ? 200 : 0;
+    const gsmFee = selectedGSM === 240 ? 100 : (selectedGSM === 220 ? 50 : 0);
+    const total = basePrice + customFee + gsmFee;
+
+    document.getElementById('total-price-' + productId).innerHTML =
+      `₹${total} <span>+ ₹${customFee} custom</span>`;
+  }
+
+  // Reset design
+  window['resetDesign' + productId] = function() {
+    fabricCanvas.getObjects().forEach(obj => {
+      if (obj.label === 'userDesign') {
+        fabricCanvas.remove(obj);
+      }
+    });
+    fabricCanvas.renderAll();
+
+    document.getElementById('upload-zone-' + productId).classList.remove('has-design');
+    document.getElementById('design-info-' + productId).classList.remove('visible');
+    currentDesign = null;
+    updatePrice();
+  };
+
+  // Zoom function
+  window['zoomIn' + productId] = function() {
+    const activeObj = fabricCanvas.getActiveObject();
+    if (activeObj && activeObj.label === 'userDesign') {
+      activeObj.scale(activeObj.scaleX * 1.2);
+      fabricCanvas.renderAll();
+    }
+  };
+
+  // Add to cart
+  window['addToCart' + productId] = async function() {
+    const hasDesign = fabricCanvas.getObjects().some(obj => obj.label === 'userDesign');
+
+    if (hasDesign) {
+      // Get design as data URL
+      const designDataUrl = fabricCanvas.toDataURL({
+        format: 'png',
+        quality: 1,
+        multiplier: 2 // Higher resolution
+      });
+
+      // Upload to Google Drive
+      const uploadResult = await VisrivaUploader.uploadDesign(
+        designDataUrl,
+        `visriva-design-${Date.now()}.png`,
+        {
+          orderId: generateOrderId(),
+          productId: productId,
+          color: selectedColor,
+          gsm: selectedGSM,
+          size: selectedSize
+        }
+      );
+
+      if (uploadResult.success) {
+        console.log('[VISRIVA] Design uploaded:', uploadResult.webViewLink);
+        // Store the Drive link as a line item property
+        window.designUploadResult = uploadResult;
+      } else {
+        console.warn('[VISRIVA] Design upload failed:', uploadResult.error);
+      }
+    }
+
+    alert(`Added to cart!\nSize: ${selectedSize}\nGSM: ${selectedGSM}\nColor: ${selectedColor}\n${hasDesign ? 'Custom design included ✓' : ''}`);
+  };
+
+  // Save design
+  window['saveDesign' + productId] = function() {
+    const dataUrl = fabricCanvas.toDataURL({
+      format: 'png',
+      quality: 1
+    });
+
+    const link = document.createElement('a');
+    link.download = 'visriva-design.png';
+    link.href = dataUrl;
+    link.click();
+  };
+
+  // Initialize on load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCanvas);
+  } else {
+    initCanvas();
+  }
+})();
+</script>

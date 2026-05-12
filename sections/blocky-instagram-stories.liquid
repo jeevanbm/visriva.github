@@ -1,0 +1,879 @@
+{%- comment -%}
+  © BlockyApps. You are permitted to use this content within your store. Redistribution or use in any other application is strictly prohibited. 
+  Unauthorized copying, distribution, or reproduction in any form will result in legal action.
+{% endcomment %}
+
+{%- style -%}
+blocky-insta {
+  display: block;
+  position: relative;
+  --pfp-size: 7rem;
+}
+.blocky-insta-buttons-overflow-container {
+  overflow: hidden;
+}
+.blocky-insta-buttons-overflow-container .blocky-insta-arrow-btn-prev {
+  left: 0;
+  transform: translateY(-50%);
+  display: none;
+}
+.blocky-insta-buttons-overflow-container .blocky-insta-arrow-btn-next {
+  right: 0;
+  transform: translateY(-50%);
+  display: none;
+}
+.blocky-insta-buttons {
+  display: flex;
+  column-gap: 1rem;
+  align-items: flex-start;
+  width: fit-content;
+  margin: 0 auto;
+}
+.blocky-insta-story-btn {
+  width: var(--pfp-size);
+  padding: 0;
+  color: var(--username-color);  
+}
+.blocky-insta-story-btn:focus-visible {
+	outline: none;
+	box-shadow: none;
+}
+.blocky-insta-story-btn-ring {
+  width: var(--pfp-size);
+  height: var(--pfp-size);
+  border-radius: 50%;
+  padding: 0.3rem;
+  background: purple;
+  background: linear-gradient( 45deg, rgba(255, 200, 0, 1) 15%, rgba(255, 21, 88, 1) 50%, rgba(211, 0, 197, 1) 85% );
+}
+.blocky-insta-story-btn-ring-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  padding: 0.3rem;
+  background: rgb(var(--color-background));
+}
+.blocky-insta-story-btn-pic {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.blocky-insta-story-btn-pic:has( > .material-icons) {
+  background: #c2c2c2;
+}
+.blocky-insta-story-btn-pic .material-icons {
+  font-size: calc(var(--pfp-size) * 0.9);
+  color: #fff;
+  transform: translateY(18%);
+}
+.blocky-insta-story-btn-username {
+  max-width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
+  overflow: hidden;
+  text-align: center;
+  margin-top: 0.4em;
+  font-size: calc(var(--pfp-size) / 6);
+}
+.blocky-insta-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  display: none;
+  place-items: center;
+  background: #000000e6;
+  backdrop-filter: blur(5px);
+  --story-height: calc(100dvh - 4rem);
+  --story-width: min(calc(var(--story-height) * 9 / 16), 100dvw);
+}
+.blocky-insta-modal[data-open="true"] {
+  display: grid;
+}
+.blocky-insta-modal-close {
+  font-size: 4rem;
+  width: 1em;
+  height: 1em;
+  display: grid;
+  place-items: center;
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  z-index: 2;
+}
+.blocky-insta-modal-close .material-icons {
+  font-size: 1em;
+  color: #ececec;
+}
+@media screen and (max-width: 749px) {
+  .blocky-insta-modal-close {
+    display: none;
+  }
+}
+.blocky-insta-slider-container {
+  max-width: calc(var(--story-width) * 3);
+  overflow: hidden;
+}
+.blocky-insta-slider {
+  display: flex;
+  width: fit-content;
+  transition: transform 0.3s;
+  position: relative;
+}
+.blocky-insta-story {
+  height: var(--story-height);
+  width: var(--story-width);
+  position: relative;
+  z-index: 0;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 1px 4px, rgba(0, 0, 0, 0.16) 0px 3px 8px;
+  transition: transform 0.3s;
+  transform: scale(0.6);
+}
+.blocky-insta-story-active {
+  transform: scale(1);
+  z-index: 1;
+}
+.blocky-insta-story-top {
+  position: relative;
+  padding: 2rem;
+  z-index: 2;
+  width: 100%;
+}
+.blocky-insta-story-progress {
+  display: flex;
+  justify-content: space-between;
+  column-gap: 0.3rem;
+}
+.blocky-insta-story-progress-item {
+  display: block;
+  height: 0.3rem;
+  border-radius: 1rem;
+  flex: 1 1 auto;
+  background: #ffffff60;
+  position: relative;
+}
+.blocky-insta-story-progress-bar {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background: #fff;
+}
+.blocky-insta-story-progress-item-completed .blocky-insta-story-progress-bar {
+  width: 100%;
+}
+.blocky-insta-story-progress-item-active .blocky-insta-story-progress-bar {
+  animation: fillProgress var(--duration) linear forwards;
+}
+@keyframes fillProgress {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+.blocky-insta-story-info {
+  display: flex;
+  align-items: center;
+  padding-top: 1rem;
+  --pfp-size: 4rem;
+}
+.blocky-insta-story-pfp {
+  width: var(--pfp-size);
+  height: var(--pfp-size);
+}
+.blocky-insta-story-info-text, .blocky-insta-story-info-text .material-icons {
+  font-size: 1.6rem;
+  line-height: var(--pfp-size);
+  margin: 0;
+}
+.blocky-insta .blocky-insta-story-info-text {
+  display: flex;
+  gap: 6px;
+  margin-right: auto;
+  margin-left: 0.6em;
+  color: white;
+}
+.blocky-insta .blocky-insta-story-time-posted {
+  margin-left: 0.25em;
+  opacity: 0.8;
+}
+.blocky-insta-story-info-btn {
+  color: #ececec;
+  padding: 0.5rem;
+}
+.blocky-insta-story-info-volume-btn[data-muted="true"] .material-icons:first-child {
+  display: none;
+}
+.blocky-insta-story-info-volume-btn[data-muted="false"] .material-icons:last-child {
+  display: none;
+}
+.blocky-insta-story-pause-resume-btn[data-paused="true"] .material-icons:first-child {
+  display: none;
+}
+.blocky-insta-story-pause-resume-btn[data-paused="false"] .material-icons:last-child {
+  display: none;
+}
+.blocky-insta-story-info-close-btn {
+  padding: 0;
+  margin-left: 0.4rem;
+}
+.blocky-insta-story-info-close-btn .material-icons {
+  font-size: 3.25rem;
+}
+.blocky-insta-story-invisible-btn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 15%;
+  background: none;
+  border: none;
+  outline: none;
+  opacity: 0;
+  z-index: 1;
+}
+.blocky-insta-story-invisible-btn.blocky-insta-story-next {
+  left: auto;
+  right: 0;
+}
+.blocky-insta-story-media {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background: var(--background);
+  display: none;
+  border-radius: 15px;
+  overflow: hidden;
+}
+.blocky-insta-story-media img, .blocky-insta-story-media video {
+  width: 100%;
+  height: 100%;
+  object-fit: var(--object-fit);
+  pointer-events: none;
+}
+.blocky-insta-story-active-show, .blocky-insta-story-active-hide {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.15s;
+}
+.blocky-insta-story:not(.blocky-insta-story-active) .blocky-insta-story-active-show, .blocky-insta-story-active .blocky-insta-story-active-hide {
+  visibility: hidden;
+  opacity: 0;
+}
+.blocky-insta-story-inactive-overlay {
+  --pfp-size: calc(var(--story-width) * 0.3);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #000000bf;
+  border: 0;
+}
+.blocky-insta-story-inactive-overlay .blocky-insta-story-btn-ring {
+  margin-bottom: 12px;
+}
+.blocky-insta-story-inactive-overlay .blocky-insta-story-username {
+  color: #fff;
+  font-size: calc(var(--story-width) * 0.06);
+}
+.blocky-insta-arrow {
+  width: 3rem;
+  height: 3rem;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0;
+  border: 0;
+  outline: 0;
+}
+.blocky-insta-story .blocky-insta-arrow {
+  opacity: 0.8;
+}
+.blocky-insta-arrow .material-icons {
+  font-size: 2.6rem;
+  color: #000;
+}
+.blocky-insta-arrow[disabled] {
+  opacity: 0.2;
+}
+.blocky-insta-story .blocky-insta-arrow-next {
+  left: calc(100% + 3rem);
+}
+.blocky-insta-arrow-next .material-icons {
+  transform: translateX(3%);
+}
+.blocky-insta-story .blocky-insta-arrow-prev {
+  right: calc(100% + 3rem);
+  transform: translate(50%, -50%);
+}
+.blocky-insta-arrow-prev .material-icons {
+  transform: translateX(-3%);
+}
+@media screen and (max-width: 749px) {
+  .blocky-insta-modal {
+    --story-height: 100dvh;
+    --story-width: 100dvw;
+  }
+  .blocky-insta-story {
+    transform: scale(1);
+  }
+  .blocky-insta-buttons-overflow-container .blocky-insta-arrow-btn-prev {
+    left: -1rem;
+  }
+  .blocky-insta-buttons-overflow-container .blocky-insta-arrow-btn-next {
+    right: -1rem;
+  }
+}
+.blocky-insta button {
+  cursor: pointer;
+}
+.blocky-insta-story-placeholder {
+  fill: grey;
+} 
+.blocky-insta-icon-button {
+  background-color: transparent;
+  outline: none;
+  border: none;
+}
+{%- endstyle -%}
+
+<script src="{{ 'blocky-instagram-stories.js' | asset_url }}" defer></script>
+
+<div class="blocky background-wrapper" 
+  style="--padding-top: {{ section.settings.padding_top }}; --padding-bottom: {{ section.settings.padding_bottom }}; --background-color: {{ section.settings.background_color }}; --section-page-width: {{ section.settings.page_width | divided_by: 10 }}rem;
+    --title-color: {{ section.settings.title_color }}; --description-color: {{ section.settings.body_color }}; --username-color: {{ section.settings.username_color }};"
+>
+  <div class="blocky-padding blocky-page-width">
+    <div class="blocky-flex-col blocky-text-container-{{ section.settings.content_alignment }}" style="gap: 2rem; margin-bottom: 2rem;">
+      {% render 'blocky-titlel', block: section %}
+      {% render 'blocky-bodyl', block: section %}
+    </div>
+    
+    <blocky-insta
+      class="blocky-insta"
+      data-stories="{{ section.blocks.size | minus: 1 }}"
+    >
+      <div class="blocky-insta-buttons-overflow-container">
+        <div class="blocky-insta-buttons">
+          {% for block in section.blocks %}
+            <button
+              class="blocky-insta-story-btn blocky-insta-icon-button"
+              data-index="{{ forloop.index0 }}"
+              {{ block.shopify_attributes }}
+            >
+              <div class="blocky-insta-story-btn-ring">
+                <div class="blocky-insta-story-btn-ring-inner">
+                  <div class="blocky-insta-story-btn-pic">
+                    {% if block.settings.profile_picture != blank %}
+                      <img
+                        class="blocky-image-cover"
+                        src="{{ block.settings.profile_picture | image_url: width: 400 }}"
+                        alt="{{ block.settings.username }}"
+                        width="100%"
+                        height="100%"
+                        loading="lazy"
+                      >
+                    {% else %}
+                      <span class="material-icons filled material-symbols-outlined"> person </span>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+              <span class="blocky-insta-story-btn-username">{{ block.settings.username }}</span>
+            </button>
+          {% endfor %}
+        </div>
+        <button class='blocky-insta-arrow blocky-insta-arrow-prev blocky-insta-story-active-show blocky-insta-arrow-btn-prev'>
+          <span class="material-icons material-symbols-outlined"> chevron_left </span>
+        </button>
+        <button class='blocky-insta-arrow blocky-insta-arrow-next blocky-insta-story-active-show blocky-insta-arrow-btn-next'>
+          <span class="material-icons material-symbols-outlined"> chevron_right </span>
+        </button>
+      </div>
+      
+      <div
+        class="blocky-insta-modal"
+        data-open="false"
+      >
+        <button class='blocky-insta-modal-close blocky-insta-icon-button blocky-insta-close-button blocky-mobile-hidden'>
+          <span class="material-icons material-symbols-outlined"> close </span>
+        </button>
+        <div class='blocky-insta-slider-container'>
+          <div class='blocky-insta-slider'>
+            {% for block in section.blocks %}
+              <div
+                class="blocky-insta-story"
+                data-index="{{ forloop.index0 }}"
+                data-active-media-index="0"
+                data-played="false"
+              >
+                <div class='blocky-insta-story-top blocky-insta-story-active-show'>
+                  <div class='blocky-insta-story-progress'>
+                    {% for i in (1 .. 3) %}
+                      {% assign image = 'image_' | append: i %}
+                      {% assign video = 'video_' | append: i %}                      
+                      {% if block.settings[image] != blank or block.settings[video] != blank or i == 1%}
+                        <span class="blocky-insta-story-progress-item" style="--duration: {% if block.settings[video] != blank %}{{ block.settings[video].duration | divided_by: 1000.0 }}{% else %}{{ section.settings.autoplay_speed }}{% endif %}s">
+                          <span class="blocky-insta-story-progress-bar"></span>
+                        </span>
+                      {% endif %}
+                    {% endfor %}                    
+                  </div>
+                  <div class='blocky-insta-story-info'>
+                    <div class='blocky-insta-story-btn-pic blocky-insta-story-pfp'>
+                      {% if block.settings.profile_picture != blank %}
+                        <img
+                          class="blocky-image-cover"
+                          src="{{ block.settings.profile_picture | image_url: width: 400 }}"
+                          alt="{{ block.settings.username }}"
+                          width="100%"
+                          height="100%"
+                          loading="lazy"
+                        >
+                      {% else %}
+                        <span class="material-icons filled material-symbols-outlined"> person </span>
+                      {% endif %}
+                    </div>
+                    <p class='blocky-insta-story-info-text'>
+                      <span class='blocky-insta-story-username'>
+                        {{ block.settings.username }}
+                      </span>
+                      {% if block.settings.verified %}
+                        <span class="material-icons filled material-symbols-outlined"> verified </span>
+                      {% endif %}
+                      <span class='blocky-insta-story-time-posted'></span>
+                    </p>
+                    <button class='blocky-insta-story-info-btn blocky-insta-story-pause-resume-btn blocky-insta-icon-button' data-paused='false'>
+                      <span class="material-icons filled material-symbols-outlined"> pause </span>
+                      <span class="material-icons filled material-symbols-outlined"> play_arrow </span>
+                    </button>
+                    <button class='blocky-insta-story-info-btn blocky-insta-story-info-volume-btn blocky-insta-story-volume-btn blocky-insta-icon-button' data-muted='true'>
+                      <span class="material-icons filled material-symbols-outlined"> volume_up </span>
+                      <span class="material-icons filled material-symbols-outlined"> volume_off </span>
+                    </button>
+                    <button class='blocky-insta-story-info-btn blocky-insta-story-info-close-btn blocky-insta-close-button blocky-insta-icon-button blocky-desktop-hidden'>
+                      <span class="material-icons material-symbols-outlined"> close </span>
+                    </button>
+                  </div>
+                </div>
+                {% for i in (1 .. 3) %}
+                  {% assign image = 'image_' | append: i %}
+                  {% assign video = 'video_' | append: i %}
+                  {% assign time_posted = 'time_posted_' | append: i %}
+                  {% assign background = 'background_' | append: i %}
+                  {% assign media_fit = 'media_fit_' | append: i %}
+                  
+                  {% if block.settings[video] != blank %}
+                    <div 
+                      class='blocky-insta-story-media' 
+                      data-type='video'
+                      data-duration="{{ block.settings[video].duration | divided_by: 1000.0 }}" 
+                      data-time-posted="{{ block.settings[time_posted] }}"
+                      style="--background:{{ block.settings[background] }};--object-fit:{{ block.settings[media_fit] }}"
+                    >
+                      {{
+                        block.settings[video]
+                        | video_tag:
+                          image_size: '1000x',
+                          loop: false,
+                          muted: true,
+                          playsinline: '',
+                          autoplay: false
+                      }}
+                    </div>
+                  {% elsif block.settings[image] != blank %}
+                    <div 
+                      class='blocky-insta-story-media' 
+                      data-type='image' 
+                      data-duration="{{ section.settings.autoplay_speed }}" 
+                      data-time-posted="{{ block.settings[time_posted] }}"
+                      style="--background:{{ block.settings[background] }};--object-fit:{{ block.settings[media_fit] }}"
+                    >
+                      {{ block.settings[image] | image_url: width: 1500| image_tag: loading: 'lazy' }}
+                    </div>
+                  {% elsif i == 1 %}
+                    <div
+                      class="blocky-insta-story-media"
+                      data-type='image' 
+                      data-duration="{{ section.settings.autoplay_speed }}" 
+                      data-time-posted="{{ block.settings[time_posted] }}"
+                      style="--background:{{ block.settings[background] }};--object-fit:{{ block.settings[media_fit] }}"
+                    >
+                      {{ 'image' | placeholder_svg_tag: "blocky-w-full blocky-h-full blocky-insta-story-placeholder" }}
+                    </div>
+                  {% endif %}
+                {% endfor %}
+                <button class='blocky-insta-story-inactive-overlay blocky-insta-story-active-hide blocky-insta-story-slide-btn' data-index="{{ forloop.index0 }}">
+                  <div class="blocky-insta-story-btn-ring blocky-mobile-hidden">
+                    <div class="blocky-insta-story-btn-ring-inner">
+                      <div class="blocky-insta-story-btn-pic">
+                        {% if block.settings.profile_picture != blank %}
+                          <img
+                            class="blocky-image-cover"
+                            src="{{ block.settings.profile_picture | image_url: width: 400 }}"
+                            alt="{{ block.settings.username }}"
+                            width="100%"
+                            height="100%"
+                            loading="lazy"
+                          >
+                        {% else %}
+                          <span class="material-icons filled material-symbols-outlined"> person </span>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                  <span class='blocky-insta-story-username blocky-mobile-hidden'>
+                    {{ block.settings.username }}
+                  </span>
+                </button>
+                <button class='blocky-insta-story-invisible-btn blocky-insta-story-prev blocky-insta-story-active-show'>&nbsp</button>
+                <button class='blocky-insta-story-invisible-btn blocky-insta-story-next blocky-insta-story-active-show'>&nbsp</button>
+                <button class='blocky-insta-arrow blocky-insta-arrow-prev blocky-insta-story-active-show blocky-insta-story-prev blocky-mobile-hidden'>
+                  <span class="material-icons material-symbols-outlined"> chevron_left </span>
+                </button>
+                <button class='blocky-insta-arrow blocky-insta-arrow-next blocky-insta-story-active-show blocky-insta-story-next blocky-mobile-hidden'>
+                  <span class="material-icons material-symbols-outlined"> chevron_right </span>
+                </button>
+              </div>
+
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </blocky-insta>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "BKY - Instagram Stories",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "Title",
+      "default": "<b>Instagram Stories</b>"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title size",
+      "default": 60,
+      "min": 30,
+      "max": 100,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color",
+      "default": "#000000",
+    },
+    {
+      "type": "richtext",
+      "id": "body_text",
+      "default": "<p>Bring your products to life with Instagram stories, offering a seamless and engaging way to shop.</p>",
+      "label": "Description",
+      "info": "Leave the text blank to hide the body."
+    },
+    {
+      "type": "color",
+      "id": "body_color",
+      "label": "Description Color",
+      "default": "#000000",
+    },
+    {
+      "type": "range",
+      "id": "body_size",
+      "label": "Description size",
+      "default": 20,
+      "min": 10,
+      "max": 40,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center",
+      "label": "Content alignment"
+    },
+    {
+      "type": "header",
+      "content": "Stories"
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "min": 5,
+      "max": 15,
+      "step": 1,
+      "unit": "sec",
+      "label": "Media autoplay speed",
+      "default": 10
+    },
+    {
+      "type": "color",
+      "id": "username_color",
+      "label": "Username Color",
+      "default": "#000000",
+    },
+    {
+      "type": "header",
+        "content": "Section options",
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "page_width",
+      "unit": "px",
+      "step": 100,
+      "min": 800,
+      "max": 1600,
+      "default": 1100,
+      "label": "Section width",
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "user",
+      "name": "User post",
+      "settings": [
+        {
+          "type": "text",
+          "id": "username",
+          "label": "Username",
+          "default": "Blocky"
+        },
+        {
+          "type": "checkbox",
+          "id": "verified",
+          "label": "Verified account",
+          "default": false
+        },
+        {
+          "type": "image_picker",
+          "id": "profile_picture",
+          "label": "Profile picture"
+        },
+        {
+          "type": "header",
+          "content": "Story 1"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_1",
+          "label": "Image"
+        },
+        {
+          "type": "video",
+          "id": "video_1",
+          "label": "Video"
+        },
+        {
+          "type": "select",
+          "id": "media_fit_1",
+          "options": [
+            {
+              "value": "contain",
+              "label": "Fit"
+            },
+            {
+              "value": "cover",
+              "label": "Cover"
+            }
+          ],
+          "default": "contain",
+          "label": "Media fit",
+        },
+        {
+          "type": "text",
+          "id": "time_posted_1",
+          "label": "Time posted",
+          "default": "15m"
+        },
+        {
+          "type": "color",
+          "id": "background_1",
+          "label": "Background",
+          "default": "#282828",
+          "info": "The background is only shown if media fit is set to 'Fit'"
+        },
+        {
+          "type": "header",
+          "content": "Story 2"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_2",
+          "label": "Image"
+        },
+        {
+          "type": "video",
+          "id": "video_2",
+          "label": "Video"
+        },
+        {
+          "type": "select",
+          "id": "media_fit_2",
+          "options": [
+            {
+              "value": "contain",
+              "label": "Fit"
+            },
+            {
+              "value": "cover",
+              "label": "Cover"
+            }
+          ],
+          "default": "contain",
+          "label": "Media fit",
+        },
+        {
+          "type": "text",
+          "id": "time_posted_2",
+          "label": "Time posted",
+          "default": "2h"
+        },
+        {
+          "type": "color",
+          "id": "background_2",
+          "label": "Background",
+          "default": "#282828",
+          "info": "The background is only shown if media fit is set to 'Fit'"
+        },
+        {
+          "type": "header",
+          "content": "Story 3"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_3",
+          "label": "Image"
+        },
+        {
+          "type": "video",
+          "id": "video_3",
+          "label": "Video"
+        },
+        {
+          "type": "select",
+          "id": "media_fit_3",
+          "options": [
+            {
+              "value": "contain",
+              "label": "Fit"
+            },
+            {
+              "value": "cover",
+              "label": "Cover"
+            }
+          ],
+          "default": "contain",
+          "label": "Media fit",
+        },
+        {
+          "type": "text",
+          "id": "time_posted_3",
+          "label": "Time posted",
+          "default": "7h"
+        },
+        {
+          "type": "color",
+          "id": "background_3",
+          "label": "Background",
+          "default": "#282828",
+          "info": "The background is only shown if media fit is set to 'Fit'"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blocky Instagram Stories",
+      "blocks": [
+        {
+          "type": "user"
+        },
+        {
+          "type": "user"
+        },
+        {
+          "type": "user"
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
+}
+{% endschema %}

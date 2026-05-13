@@ -3,12 +3,18 @@ services:
     github:
       repo: jeevanbm/claude-visriva-shopify-
       branch: main
+    type: web
     buildCommand: npm install
     startCommand: node server/visriva-drive-upload.js
     plan: free
+    regions:
+      - oregon
+    healthCheckPath: /
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 3000
       # NOTE: Add these env vars in Render Dashboard > Environment > Secrets
       # GOOGLE_SERVICE_ACCOUNT: (paste entire service account JSON from config file)
       # DRIVE_FOLDER_ID: 0AFbUKkWBimP5Uk9PVA

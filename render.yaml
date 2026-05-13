@@ -1,0 +1,11 @@
+services:
+  - name: visriva-upload-service
+    github:
+      repo: jeevanbm/claude-visriva-shopify-
+    branch: main
+    buildCommand: npm install
+    startCommand: node server/visriva-drive-upload.js
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production

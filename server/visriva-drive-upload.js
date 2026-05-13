@@ -7,10 +7,12 @@ const { google } = require('googleapis');
 const fs = require('fs');
 const path = require('path');
 
-// Configuration - Replace these with your actual values
+// Configuration - Supports both env vars and local file fallback
 const CONFIG = {
-  SERVICE_ACCOUNT_KEY_PATH: './config/visriva-production-uploads-a265798b1976.json',
-  DRIVE_FOLDER_ID: '0AFbUKkWBimP5Uk9PVA', // VISRIVA uploads folder (creator:visriva-uploader)
+  // For local development: use file path
+  // For production: use GOOGLE_SERVICE_ACCOUNT env var (JSON string)
+  SERVICE_ACCOUNT_KEY_PATH: process.env.SERVICE_ACCOUNT_KEY_PATH || './config/visriva-production-uploads-a265798b1976.json',
+  DRIVE_FOLDER_ID: process.env.DRIVE_FOLDER_ID || '0AFbUKkWBimP5Uk9PVA',
   SCOPES: ['https://www.googleapis.com/auth/drive.file']
 };
 
@@ -19,10 +21,19 @@ const CONFIG = {
  */
 function initializeDriveClient() {
   try {
-    // Load service account credentials
-    const credentials = JSON.parse(
-      fs.readFileSync(CONFIG.SERVICE_ACCOUNT_KEY_PATH, 'utf8')
-    );
+    let credentials;
+
+    // First try environment variable (for production deployment)
+    if (process.env.GOOGLE_SERVICE_ACCOUNT) {
+      credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
+      console.log('[VISRIVA] Using service account from environment variable');
+    } else {
+      // Fallback to local file (for development)
+      credentials = JSON.parse(
+        fs.readFileSync(CONFIG.SERVICE_ACCOUNT_KEY_PATH, 'utf8')
+      );
+      console.log('[VISRIVA] Using service account from file');
+    }
 
     const auth = new google.auth.GoogleAuth({
       credentials,
@@ -450,6 +461,37 @@ module.exports = {
   CONFIG,
   router
 };
+
+// ============== Start Server if run directly ==============
+if (require.main === module) {
+  const express = require('express');
+  const cors = require('cors');
+  const app = express();
+
+  // Enable CORS for all origins (Shopify storefront)
+  app.use(cors());
+
+  // Parse JSON and multipart form data
+  app.use(express.json());
+
+  // Mount API routes
+  app.use('/api', router);
+
+  // Health check endpoint
+  app.get('/', (req, res) => {
+    res.json({ status: 'ok', service: 'VISRIVA Upload Service' });
+  });
+
+  // 404 handler
+  app.use((req, res) => {
+    res.status(404).json({ error: 'Not found' });
+  });
+
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`[VISRIVA] Server running on port ${PORT}`);
+  });
+}
 
 // ============== Deployment Instructions ==============
 /*

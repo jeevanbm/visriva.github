@@ -5,8 +5,9 @@
 
 const VisrivaUploader = (function() {
   const CONFIG = {
-    // VISRIVA Backend Upload Endpoint
-    UPLOAD_ENDPOINT: 'https://visriva-upload.loca.lt/api/upload-design',
+    // VISRIVA Backend Upload Endpoint - UPDATE THIS AFTER DEPLOYMENT
+    // Render deployment URL will be like: https://your-service.onrender.com
+    UPLOAD_ENDPOINT: 'https://visriva-upload-service.onrender.com/api/upload-design',
     // For localhost testing:
     // UPLOAD_ENDPOINT: 'http://localhost:3000/api/upload-design',
     MAX_FILE_SIZE: 100 * 1024 * 1024, // 100MB

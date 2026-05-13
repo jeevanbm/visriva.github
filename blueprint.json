@@ -1,0 +1,11 @@
+{
+  "name": "visriva-upload-service",
+  "runtime": "node",
+  "repo": "https://github.com/jeevanbm/visriva",
+  "branch": "main",
+  "region": "oregon",
+  "plan": "starter",
+  "buildCommand": "npm install",
+  "startCommand": "node server/visriva-drive-upload.js",
+  "healthCheckPath": "/api/designs"
+}

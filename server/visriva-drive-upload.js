@@ -25,14 +25,28 @@ function initializeDriveClient() {
 
     // First try environment variable (for production deployment)
     if (process.env.GOOGLE_SERVICE_ACCOUNT) {
-      credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
-      console.log('[VISRIVA] Using service account from environment variable');
-    } else {
-      // Fallback to local file (for development)
-      credentials = JSON.parse(
-        fs.readFileSync(CONFIG.SERVICE_ACCOUNT_KEY_PATH, 'utf8')
-      );
-      console.log('[VISRIVA] Using service account from file');
+      console.log('[VISRIVA] GOOGLE_SERVICE_ACCOUNT env var found, length:', process.env.GOOGLE_SERVICE_ACCOUNT.length);
+      try {
+        credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
+        console.log('[VISRIVA] Using service account from environment variable');
+      } catch (parseError) {
+        console.error('[VISRIVA] Failed to parse GOOGLE_SERVICE_ACCOUNT:', parseError.message);
+        // Fall through to try file
+      }
+    }
+
+    // Fallback to local file if env var didn't work
+    if (!credentials) {
+      console.log('[VISRIVA] Trying to load from file:', CONFIG.SERVICE_ACCOUNT_KEY_PATH);
+      try {
+        credentials = JSON.parse(
+          fs.readFileSync(CONFIG.SERVICE_ACCOUNT_KEY_PATH, 'utf8')
+        );
+        console.log('[VISRIVA] Using service account from file');
+      } catch (fileError) {
+        console.error('[VISRIVA] Failed to load from file:', fileError.message);
+        throw new Error('No valid credentials found');
+      }
     }
 
     const auth = new google.auth.GoogleAuth({
@@ -43,7 +57,7 @@ function initializeDriveClient() {
     return google.drive({ version: 'v3', auth });
   } catch (error) {
     console.error('Failed to initialize Google Drive client:', error.message);
-    throw new Error('Google Drive authentication failed');
+    throw new Error('Google Drive authentication failed: ' + error.message);
   }
 }
 
@@ -468,6 +482,18 @@ if (require.main === module) {
   const cors = require('cors');
   const app = express();
 
+  // Enhanced startup logging
+  console.log('[VISRIVA] Starting upload service...');
+  console.log('[VISRIVA] Node version:', process.version);
+  console.log('[VISRIVA] NODE_ENV:', process.env.NODE_ENV || 'not set');
+  console.log('[VISRIVA] PORT:', process.env.PORT || 'default 3000');
+  console.log('[VISRIVA] DRIVE_FOLDER_ID:', CONFIG.DRIVE_FOLDER_ID);
+  console.log('[VISRIVA] SERVICE_ACCOUNT_KEY_PATH:', CONFIG.SERVICE_ACCOUNT_KEY_PATH);
+  console.log('[VISRIVA] GOOGLE_SERVICE_ACCOUNT set:', !!process.env.GOOGLE_SERVICE_ACCOUNT);
+  if (process.env.GOOGLE_SERVICE_ACCOUNT) {
+    console.log('[VISRIVA] GOOGLE_SERVICE_ACCOUNT length:', process.env.GOOGLE_SERVICE_ACCOUNT.length, 'chars');
+  }
+
   // Enable CORS for all origins (Shopify storefront)
   app.use(cors());
 
@@ -492,55 +518,3 @@ if (require.main === module) {
     console.log(`[VISRIVA] Server running on port ${PORT}`);
   });
 }
-
-// ============== Deployment Instructions ==============
-/*
-DEPLOYMENT OPTIONS:
-
-1. RAILWAY (Recommended - Free tier available)
-   - npm install -g @railway/cli
-   - railway login
-   - railway init
-   - railway up
-   - Set environment variable: SERVICE_ACCOUNT_KEY_PATH=/app/config/service-account.json
-   - Or upload the config file via Railway dashboard
-
-2. RENDER
-   - Create Web Service
-   - Connect GitHub repo
-   - Set build command: npm install
-   - Set start command: npm start
-   - Add environment variables in dashboard
-
-3. HEROKU
-   - heroku create visriva-upload-service
-   - git push heroku main
-   - Set config vars in Heroku dashboard
-
-4. NGROK (for local testing)
-   - Download ngrok
-   - Run: ngrok http 3000
-   - Copy the https URL to assets/visriva-uploader.js
-
-CONFIGURATION:
-1. Upload config/visriva-production-uploads-a265798b1976.json to your hosting
-2. Update SERVICE_ACCOUNT_KEY_PATH in CONFIG to match the path on your server
-3. Update the UPLOAD_ENDPOINT in visriva-uploader.js with your deployed URL
-4. Ensure the Google Drive folder is shared with: visriva-uploader@visriva-production-uploads.iam.gserviceaccount.com
-*/
-
-// ============== Usage Example ==============
-/*
-// In your main server file:
-
-const express = require('express');
-const { router } = require('./visriva-drive-upload');
-
-const app = express();
-app.use(express.json());
-app.use('/api', router);
-
-app.listen(3000, () => {
-  console.log('[VISRIVA] Server running on port 3000');
-});
-*/

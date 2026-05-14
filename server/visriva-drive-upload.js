@@ -1,6 +1,7 @@
 /**
  * VISRIVA Google Drive Upload Service
  * Handles custom design uploads from the T-shirt customizer
+ * Retry deployment after secret unblock
  */
 
 const { google } = require('googleapis');

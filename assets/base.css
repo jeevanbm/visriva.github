@@ -3610,7 +3610,7 @@ details-disclosure > details {
 }
 
 body, body.gradient {
-  background-image: url('background-13.png') !important;
+  background-image: url('background-green.png') !important;
   background-size: cover !important;
   background-position: center !important;
   background-attachment: fixed !important;

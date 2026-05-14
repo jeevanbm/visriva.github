@@ -1,5 +1,17 @@
 {
   "sections": {
+    "tshirt_customizer": {
+      "type": "tshirt-customizer",
+      "settings": {
+        "heading": "Customize Your T-Shirt",
+        "description": "Upload your design or add text to create a unique T-shirt that's one of a kind.",
+        "color_options": "White:#FFFFFF, Black:#000000, Navy:#000080, Red:#FF0000, Forest Green:#228B22, Heather Gray:#9BB7C4, Pink:#FFC0CB, Purple:#800080",
+        "price": 34.99,
+        "padding_top": 40,
+        "padding_bottom": 40,
+        "color_scheme": "scheme-1"
+      }
+    },
     "featured_collection": {
       "type": "featured-collection",
       "settings": {
@@ -30,6 +42,7 @@
     }
   },
   "order": [
+    "tshirt_customizer",
     "featured_collection"
   ]
 }

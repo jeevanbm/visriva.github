@@ -1,0 +1,481 @@
+{{ 'https://cdn.shopify.com/s/files/1/0847/5654/1297/files/tshirt-base.png?v=1234567890' | img_tag: 'T-Shirt Base', 'style="display:none;"' | all }}
+
+{% comment %} T-Shirt Customizer Section {% endcomment %}
+
+<style>
+  .tshirt-customizer {
+    padding: {{ section.settings.padding_top }}px {{ section.settings.padding_side }}px {{ section.settings.padding_bottom }}px;
+    background: var(--{% if section.settings.color_scheme == 'scheme-1' %}background{% elsif section.settings.color_scheme == 'scheme-2' %}background-2{% elsif section.settings.color_scheme == 'scheme-3' %}background-3{% endif %});
+  }
+
+  .tshirt-customizer__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  @media (max-width: 768px) {
+    .tshirt-customizer__container {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .tshirt-customizer__preview {
+    position: relative;
+    background: #f5f5f5;
+    border-radius: 12px;
+    padding: 40px;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tshirt-customizer__tshirt-image {
+    max-width: 400px;
+    width: 100%;
+    height: auto;
+  }
+
+  .tshirt-customizer__design-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 200px;
+    max-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tshirt-customizer__design-overlay img,
+  .tshirt-customizer__design-overlay svg {
+    max-width: 100%;
+    max-height: 200px;
+  }
+
+  .tshirt-customizer__options {
+    padding: 20px;
+  }
+
+  .tshirt-customizer__title {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  .tshirt-customizer__description {
+    color: var(--text);
+    opacity: 0.7;
+    margin-bottom: 24px;
+  }
+
+  .tshirt-customizer__label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+
+  .tshirt-customizer__colors {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .tshirt-customizer__color {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .tshirt-customizer__color:hover {
+    transform: scale(1.1);
+  }
+
+  .tshirt-customizer__color.active {
+    border-color: var(--text);
+  }
+
+  .tshirt-customizer__sizes {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .tshirt-customizer__size {
+    padding: 10px 20px;
+    border: 2px solid var(--text);
+    background: transparent;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .tshirt-customizer__size:hover {
+    background: var(--text);
+    color: var(--background);
+  }
+
+  .tshirt-customizer__size.active {
+    background: var(--text);
+    color: var(--background);
+  }
+
+  .tshirt-customizer__upload {
+    margin-bottom: 24px;
+  }
+
+  .tshirt-customizer__upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: var(--secondary-button);
+    color: var(--on-secondary-button);
+    border: 2px dashed var(--text);
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .tshirt-customizer__upload-input {
+    display: none;
+  }
+
+  .tshirt-customizer__text-input {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid var(--text);
+    font-size: 16px;
+    margin-bottom: 24px;
+    background: var(--background);
+    color: var(--text);
+  }
+
+  .tshirt-customizer__text-input::placeholder {
+    color: var(--text);
+    opacity: 0.5;
+  }
+
+  .tshirt-customizer__price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  .tshirt-customizer__add-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--primary-button);
+    color: var(--on-primary-button);
+    border: none;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  .tshirt-customizer__add-btn:hover {
+    opacity: 0.9;
+  }
+
+  .tshirt-customizer__preview-area {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 150px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .tshirt-customizer__preview-area img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+</style>
+
+<div class="tshirt-customizer" data-color-scheme="{{ section.settings.color_scheme }}">
+  <div class="tshirt-customizer__container">
+    <div class="tshirt-customizer__preview">
+      <img src="{{ section.settings.tshirt_base_image | default: 'https://via.placeholder.com/400x500/f5f5f5/999999?text=T-Shirt' }}"
+           alt="T-Shirt Preview"
+           class="tshirt-customizer__tshirt-image"
+           id="tshirt-preview-image">
+
+      <div class="tshirt-customizer__design-overlay" id="design-overlay">
+        <img id="uploaded-design" src="" alt="Your Design" style="display: none;">
+        <span id="text-preview" style="display: none; font-size: 24px; font-weight: bold; color: #333;"></span>
+      </div>
+    </div>
+
+    <div class="tshirt-customizer__options">
+      <h2 class="tshirt-customizer__title">{{ section.settings.heading | default: 'Customize Your T-Shirt' }}</h2>
+      <p class="tshirt-customizer__description">{{ section.settings.description | default: 'Upload your design or add text to create a unique T-shirt.' }}</p>
+
+      {% if section.settings.color_options != blank %}
+      <label class="tshirt-customizer__label">Select Color</label>
+      <div class="tshirt-customizer__colors" id="color-options">
+        {% assign colors = section.settings.color_options | split: ',' %}
+        {% for color in colors %}
+        {% assign color_hex = color | split: ':' | last | strip %}
+        {% assign color_name = color | split: ':' | first | strip %}
+        <div class="tshirt-customizer__color"
+             style="background-color: {{ color_hex }};"
+             data-color="{{ color_hex }}"
+             data-color-name="{{ color_name }}"
+             title="{{ color_name }}"
+             onclick="selectColor(this)">
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <label class="tshirt-customizer__label">Select Color</label>
+      <div class="tshirt-customizer__colors">
+        <div class="tshirt-customizer__color active" style="background-color: #FFFFFF;" data-color="#FFFFFF" data-color-name="White" onclick="selectColor(this)"></div>
+        <div class="tshirt-customizer__color" style="background-color: #000000;" data-color="#000000" data-color-name="Black" onclick="selectColor(this)"></div>
+        <div class="tshirt-customizer__color" style="background-color: #FF0000;" data-color="#FF0000" data-color-name="Red" onclick="selectColor(this)"></div>
+        <div class="tshirt-customizer__color" style="background-color: #0000FF;" data-color="#0000FF" data-color-name="Blue" onclick="selectColor(this)"></div>
+        <div class="tshirt-customizer__color" style="background-color: #008000;" data-color="#008000" data-color-name="Green" onclick="selectColor(this)"></div>
+      </div>
+      {% endif %}
+
+      <label class="tshirt-customizer__label">Select Size</label>
+      <div class="tshirt-customizer__sizes" id="size-options">
+        <button type="button" class="tshirt-customizer__size" data-size="S" onclick="selectSize(this)">S</button>
+        <button type="button" class="tshirt-customizer__size" data-size="M" onclick="selectSize(this)">M</button>
+        <button type="button" class="tshirt-customizer__size active" data-size="L" onclick="selectSize(this)">L</button>
+        <button type="button" class="tshirt-customizer__size" data-size="XL" onclick="selectSize(this)">XL</button>
+        <button type="button" class="tshirt-customizer__size" data-size="2XL" onclick="selectSize(this)">2XL</button>
+      </div>
+
+      <div class="tshirt-customizer__upload">
+        <label class="tshirt-customizer__label">Upload Your Design</label>
+        <label class="tshirt-customizer__upload-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          Choose File
+          <input type="file" class="tshirt-customizer__upload-input" accept="image/*" onchange="handleDesignUpload(event)">
+        </label>
+      </div>
+
+      <label class="tshirt-customizer__label">Add Custom Text</label>
+      <input type="text"
+             class="tshirt-customizer__text-input"
+             placeholder="Enter your text here..."
+             id="custom-text"
+             oninput="handleTextChange(this.value)">
+
+      <div class="tshirt-customizer__price">
+        {{ section.settings.price | default: 29.99 | money }}
+      </div>
+
+      <button class="tshirt-customizer__add-btn" onclick="addToCart()">
+        Add to Cart
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let selectedColor = '#FFFFFF';
+  let selectedSize = 'L';
+  let uploadedImage = null;
+
+  function selectColor(element) {
+    document.querySelectorAll('.tshirt-customizer__color').forEach(el => el.classList.remove('active'));
+    element.classList.add('active');
+    selectedColor = element.dataset.color;
+
+    const tshirtImage = document.getElementById('tshirt-preview-image');
+    if (tshirtImage) {
+      const src = tshirtImage.src;
+      if (src.includes('via.placeholder.com')) {
+        const newSrc = src.replace(/[0-9a-f]{6}/, selectedColor.replace('#', ''));
+        tshirtImage.src = newSrc;
+      }
+    }
+  }
+
+  function selectSize(element) {
+    document.querySelectorAll('.tshirt-customizer__size').forEach(el => el.classList.remove('active'));
+    element.classList.add('active');
+    selectedSize = element.dataset.size;
+  }
+
+  function handleDesignUpload(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = document.getElementById('uploaded-design');
+        img.src = e.target.result;
+        img.style.display = 'block';
+        document.getElementById('text-preview').style.display = 'none';
+        uploadedImage = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function handleTextChange(text) {
+    const textPreview = document.getElementById('text-preview');
+    const imgPreview = document.getElementById('uploaded-design');
+
+    if (text.trim()) {
+      textPreview.textContent = text;
+      textPreview.style.display = 'block';
+      imgPreview.style.display = 'none';
+    } else {
+      textPreview.style.display = 'none';
+      if (uploadedImage) {
+        imgPreview.style.display = 'block';
+      }
+    }
+  }
+
+  function addToCart() {
+    const customText = document.getElementById('custom-text').value;
+    const properties = {
+      'Color': selectedColor,
+      'Size': selectedSize,
+      'Custom Text': customText || 'None',
+      'Custom Design': uploadedImage ? 'Uploaded' : 'None'
+    };
+
+    fetch(window.Shopify.routes.root + 'cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        items: [{
+          id: {{ section.settings.product_variant_id | default: 0 }},
+          quantity: 1,
+          properties: properties
+        }]
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.items) {
+        document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
+        alert('Item added to cart!');
+      } else if (data.description) {
+        alert('Please select a valid product variant');
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "T-Shirt Customizer",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Customize Your T-Shirt"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Upload your design or add text to create a unique T-shirt."
+    },
+    {
+      "type": "url",
+      "id": "tshirt_base_image",
+      "label": "T-Shirt Base Image URL"
+    },
+    {
+      "type": "text",
+      "id": "color_options",
+      "label": "Color Options",
+      "info": "Format: ColorName:HexCode (comma separated)",
+      "example": "White:#FFFFFF, Black:#000000, Red:#FF0000"
+    },
+    {
+      "type": "number",
+      "id": "price",
+      "label": "Price",
+      "default": 29.99
+    },
+    {
+      "type": "number",
+      "id": "product_variant_id",
+      "label": "Product Variant ID",
+      "info": "Enter the variant ID of the T-Shirt product to add to cart"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 36,
+      "label": "t:sections.all.padding.top.label"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 36,
+      "label": "t:sections.all.padding.bottom.label"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1",
+      "options": [
+        {
+          "value": "scheme-1",
+          "label": "t:sections.all.colors_scheme_1.label"
+        },
+        {
+          "value": "scheme-2",
+          "label": "t:sections.all.colors_scheme_2.label"
+        },
+        {
+          "value": "scheme-3",
+          "label": "t:sections.all.colors_scheme_3.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "T-Shirt Customizer"
+    }
+  ]
+}
+{% endschema %}

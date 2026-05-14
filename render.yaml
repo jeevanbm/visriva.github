@@ -1,5 +1,5 @@
 services:
-  - name: visriva-upload-service
+  - name: claude-visriva-shopify
     github:
       repo: jeevanbm/claude-visriva-shopify-
       branch: main

@@ -98,8 +98,6 @@
                       {{ block.settings.button_label | escape }}
                     </a>
                   {%- endif -%}
-                {%- when 'review-stars' -%}
-                  {% render 'blocky-lys-review-stars', block: block %}
               {%- endcase -%}
             {%- endfor -%}
           </div>
@@ -164,8 +162,7 @@
         }
       ],
       "default": "medium",
-      "label": "t:sections.image-with-text.settings.desktop_image_width.label",
-      "info": "t:sections.image-with-text.settings.desktop_image_width.info"
+      "label": "t:sections.image-with-text.settings.desktop_image_width.label"
     },
     {
       "type": "select",
@@ -181,9 +178,48 @@
         }
       ],
       "default": "image_first",
-      "label": "t:sections.image-with-text.settings.layout.label",
-      "info": "t:sections.image-with-text.settings.layout.info"
+      "label": "t:sections.image-with-text.settings.layout.label"
     },
+    {
+      "type": "select",
+      "id": "image_behavior",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:sections.all.animation.image_behavior.options__1.label"
+        },
+        {
+          "value": "ambient",
+          "label": "t:sections.all.animation.image_behavior.options__2.label"
+        },
+        {
+          "value": "zoom-in",
+          "label": "t:sections.all.animation.image_behavior.options__4.label"
+        }
+      ],
+      "default": "none",
+      "label": "t:sections.all.animation.image_behavior.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.image-with-text.settings.header.content"
+    }, 
+    {
+      "type": "select",
+      "id": "content_layout",
+      "options": [
+        {
+          "value": "no-overlap",
+          "label": "t:sections.image-with-text.settings.content_layout.options__1.label"
+        },
+        {
+          "value": "overlap",
+          "label": "t:sections.image-with-text.settings.content_layout.options__2.label"
+        }
+      ],
+      "default": "no-overlap",
+      "label": "t:sections.image-with-text.settings.content_layout.label"
+    },       
     {
       "type": "select",
       "id": "desktop_content_position",
@@ -226,62 +262,6 @@
     },
     {
       "type": "select",
-      "id": "content_layout",
-      "options": [
-        {
-          "value": "no-overlap",
-          "label": "t:sections.image-with-text.settings.content_layout.options__1.label"
-        },
-        {
-          "value": "overlap",
-          "label": "t:sections.image-with-text.settings.content_layout.options__2.label"
-        }
-      ],
-      "default": "no-overlap",
-      "label": "t:sections.image-with-text.settings.content_layout.label"
-    },
-    {
-      "type": "color_scheme",
-      "id": "section_color_scheme",
-      "label": "t:sections.all.colors.label",
-      "default": "scheme-1"
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "t:sections.multirow.settings.container_color_scheme.label",
-      "default": "scheme-1"
-    },
-    {
-      "type": "header",
-      "content": "t:sections.all.animation.content"
-    },
-    {
-      "type": "select",
-      "id": "image_behavior",
-      "options": [
-        {
-          "value": "none",
-          "label": "t:sections.all.animation.image_behavior.options__1.label"
-        },
-        {
-          "value": "ambient",
-          "label": "t:sections.all.animation.image_behavior.options__2.label"
-        },
-        {
-          "value": "zoom-in",
-          "label": "t:sections.all.animation.image_behavior.options__4.label"
-        }
-      ],
-      "default": "none",
-      "label": "t:sections.all.animation.image_behavior.label"
-    },
-    {
-      "type": "header",
-      "content": "Mobile layout"
-    },
-    {
-      "type": "select",
       "id": "mobile_content_alignment",
       "options": [
         {
@@ -299,6 +279,22 @@
       ],
       "default": "left",
       "label": "t:sections.image-with-text.settings.mobile_content_alignment.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.image-with-text.settings.header_colors.content"
+    },        
+    {
+      "type": "color_scheme",
+      "id": "section_color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.multirow.settings.container_color_scheme.label",
+      "default": "scheme-1"
     },
     {
       "type": "header",
@@ -467,68 +463,6 @@
           "id": "button_style_secondary",
           "default": false,
           "label": "t:sections.image-with-text.blocks.button.settings.outline_button.label"
-        }
-      ]
-    },
-    {
-      "type": "review-stars",
-      "name": "Review Stars",
-      "limit": 1,
-      "settings": [
-         {
-          "type": "range",
-          "id": "rating",
-          "label": "Rating",
-          "min": 0,
-          "max": 5,
-          "step": 0.1,
-          "default": 5,
-          "info": "Set the rating to 0 to hide the stars"
-        },
-        {
-          "type": "color",
-          "id": "star_color",
-          "default": "#ffcc00",
-          "label": "Stars color"
-        },
-        {
-          "type": "color",
-          "id": "text_color",
-          "label": "Review text color",
-          "default": "#000000"
-        },
-    
-        {
-          "type": "select",
-          "id": "empty_stars_style",
-          "options": [
-            {
-              "value": "outlined",
-              "label": "Outlined"
-            },
-            {
-              "value": "hidden",
-              "label": "Hidden"
-            }
-          ],
-          "label": "Empty stars style",
-          "default": "hidden"
-        },
-        {
-          "type": "inline_richtext",
-          "id": "label",
-          "label": "Text",
-          "default": "Based on over <b>1000+</b> Reviews"
-        },
-        {
-          "type": "range",
-          "id": "font_size",
-          "min": 10,
-          "max": 24,
-          "step": 1,
-          "unit": "px",
-          "default": 16,
-          "label": "Text size"
         }
       ]
     }

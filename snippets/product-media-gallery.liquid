@@ -45,6 +45,9 @@
 <media-gallery
   id="MediaGallery-{{ section.id }}"
   role="region"
+  {% if section.settings.enable_sticky_info %}
+    class="product__column-sticky"
+  {% endif %}
   aria-label="{{ 'products.product.media.gallery_viewer' | t }}"
   data-desktop-layout="{{ section.settings.gallery_layout }}"
 >
@@ -55,7 +58,7 @@
     </a>
     <ul
       id="Slider-Gallery-{{ section.id }}"
-      class="product__media-list product__media-mobile-hero contains-media grid list-unstyled slider slider--mobile"
+      class="product__media-list contains-media grid grid--peek list-unstyled slider slider--mobile"
       role="list"
     >
       {%- if product.selected_or_first_available_variant.featured_media != null -%}
@@ -70,7 +73,6 @@
             media: featured_media,
             media_count: media_count,
             position: media_position,
-            media_aspect_ratio: media_aspect_ratio,
             desktop_layout: section.settings.gallery_layout,
             mobile_layout: section.settings.mobile_thumbnails,
             loop: section.settings.enable_video_looping,
@@ -109,7 +111,6 @@
               media: media,
               media_count: media_count,
               position: media_position,
-              media_aspect_ratio: media_aspect_ratio,
               desktop_layout: section.settings.gallery_layout,
               mobile_layout: section.settings.mobile_thumbnails,
               loop: section.settings.enable_video_looping,
@@ -131,7 +132,9 @@
         name="previous"
         aria-label="{{ 'general.slider.previous_slide' | t }}"
       >
-        {% render 'icon-caret' %}
+        <span class="svg-wrapper">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
       </button>
       <div class="slider-counter caption">
         <span class="slider-counter--current">1</span>
@@ -145,7 +148,9 @@
         name="next"
         aria-label="{{ 'general.slider.next_slide' | t }}"
       >
-        {% render 'icon-caret' %}
+        <span class="svg-wrapper">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
       </button>
     </div>
   </slider-component>
@@ -159,7 +164,9 @@
       data-shopify-title="{{ product.title | escape }}"
       data-shopify-xr-hidden
     >
-      {% render 'icon-3d-model' %}
+      <span class="svg-wrapper">
+        {{- 'icon-3d-model.svg' | inline_asset_content -}}
+      </span>
       {{ 'products.product.xr_button' | t }}
     </button>
   {%- endif -%}
@@ -186,7 +193,9 @@
         aria-controls="GalleryThumbnails-{{ section.id }}"
         data-step="3"
       >
-        {% render 'icon-caret' %}
+        <span class="svg-wrapper">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
       </button>
       <ul
         id="Slider-Thumbnails-{{ section.id }}"
@@ -264,11 +273,15 @@
             >
               {%- if media.media_type == 'model' -%}
                 <span class="thumbnail__badge" aria-hidden="true">
-                  {%- render 'icon-3d-model' -%}
+                  <span class="svg-wrapper">
+                    {{- 'icon-3d-model.svg' | inline_asset_content -}}
+                  </span>
                 </span>
               {%- elsif media.media_type == 'video' or media.media_type == 'external_video' -%}
                 <span class="thumbnail__badge" aria-hidden="true">
-                  {%- render 'icon-play' -%}
+                  <span class="svg-wrapper">
+                    {{- 'icon-play.svg' | inline_asset_content -}}
+                  </span>
                 </span>
               {%- endif -%}
               {%- capture thumbnail_id -%}
@@ -310,59 +323,10 @@
         aria-controls="GalleryThumbnails-{{ section.id }}"
         data-step="3"
       >
-        {% render 'icon-caret' %}
+        <span class="svg-wrapper">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
       </button>
     </slider-component>
   {%- endif -%}
 </media-gallery>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const sliders = document.querySelectorAll('.product__media-list.slider--mobile');
-    
-    sliders.forEach(slider => {
-      function updateSliderHeight() {
-        // Only trigger the dynamic height on mobile screens
-        if (window.innerWidth >= 750) {
-          slider.style.height = 'auto'; 
-          return;
-        }
-
-        let closestSlide = null;
-        let minDistance = Infinity;
-        
-        // Find the exact center of the screen/slider
-        const sliderCenter = slider.getBoundingClientRect().left + (slider.clientWidth / 2);
-        const slides = slider.querySelectorAll('.product__media-item');
-
-        // Check which slide is closest to the center while swiping
-        slides.forEach(slide => {
-          const slideCenter = slide.getBoundingClientRect().left + (slide.clientWidth / 2);
-          const distance = Math.abs(sliderCenter - slideCenter);
-          
-          if (distance < minDistance) {
-            minDistance = distance;
-            closestSlide = slide;
-          }
-        });
-
-        // Apply that slide's height to the slider track
-        if (closestSlide) {
-          const container = closestSlide.querySelector('.product-media-container');
-          if (container && container.offsetHeight > 0) {
-            slider.style.height = container.offsetHeight + 'px';
-          }
-        }
-      }
-
-      // Update height smoothly as the user swipes
-      slider.addEventListener('scroll', updateSliderHeight, { passive: true });
-      window.addEventListener('resize', updateSliderHeight);
-      
-      // Trigger immediately on load
-      window.addEventListener('load', updateSliderHeight);
-      setTimeout(updateSliderHeight, 100);
-      setTimeout(updateSliderHeight, 800); // Failsafe for slightly slower image loading
-    });
-  });
-</script>

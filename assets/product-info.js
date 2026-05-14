@@ -13,6 +13,7 @@ if (!customElements.get('product-info')) {
 
       constructor() {
         super();
+
         this.quantityInput = this.querySelector('.quantity__input');
       }
 
@@ -25,47 +26,7 @@ if (!customElements.get('product-info')) {
         );
 
         this.initQuantityHandlers();
-        
-        this.initBeforeAfterButtons();
-
         this.dispatchEvent(new CustomEvent('product-info:loaded', { bubbles: true }));
-      }
-
-    
-      initBeforeAfterButtons() {
-        const btnWrapper = this.querySelector('.before_after_dual_btn_wrapper');
-        const mediaGallery = document.querySelector(`media-gallery[id^="MediaGallery-${this.dataset.section}"]`);
-
-        if (!btnWrapper || !mediaGallery) return;
-
-        const buttons = btnWrapper.querySelectorAll('.before_after_btn');
-
-        buttons.forEach(btn => {
-          // Clone to remove old listeners
-          const newBtn = btn.cloneNode(true);
-          btn.parentNode.replaceChild(newBtn, btn);
-          
-          newBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            
-            const targetIndex = parseInt(newBtn.dataset.index);
-            
-            const mediaItems = mediaGallery.querySelectorAll('li[data-media-id]');
-            
-            if (mediaItems[targetIndex]) {
-              const targetMediaId = mediaItems[targetIndex].getAttribute('data-media-id');
-              
-              if (typeof mediaGallery.setActiveMedia === 'function') {
-                mediaGallery.setActiveMedia(targetMediaId, false); 
-                const allButtons = btnWrapper.querySelectorAll('.before_after_btn');
-                allButtons.forEach(b => b.classList.remove('active'));
-                newBtn.classList.add('active');
-              }
-            } else {
-              console.warn(`Slide index ${targetIndex} not found in media gallery.`);
-            }
-          });
-        });
       }
 
       addPreProcessCallback(callback) {
@@ -164,6 +125,7 @@ if (!customElements.get('product-info')) {
             callback(html);
           })
           .then(() => {
+            // set focus to last clicked option value
             document.querySelector(`#${targetId}`)?.focus();
           })
           .catch((error) => {
@@ -182,10 +144,13 @@ if (!customElements.get('product-info')) {
 
       buildRequestUrlWithParams(url, optionValues, shouldFetchFullPage = false) {
         const params = [];
+
         !shouldFetchFullPage && params.push(`section_id=${this.sectionId}`);
+
         if (optionValues.length) {
           params.push(`option_values=${optionValues.join(',')}`);
         }
+
         return `${url}?${params.join('&')}`;
       }
 
@@ -231,19 +196,9 @@ if (!customElements.get('product-info')) {
           this.querySelector(`#Quantity-Rules-${this.dataset.section}`)?.classList.remove('hidden');
           this.querySelector(`#Volume-Note-${this.dataset.section}`)?.classList.remove('hidden');
 
-          // Build the correct text to pass into toggleSubmitButton
-          const btn = this.querySelector(`#ProductSubmitButton-${this.dataset.section}`);
-          let customText = null;
-          if (btn?.dataset.btnTemplate && variant?.available) {
-            const price = window.Shopify?.formatMoney
-              ? window.Shopify.formatMoney(variant.price, window.Shopify.money_format || '{{amount}}')
-              : '$' + (variant.price / 100).toFixed(2).replace(/\.00$/, '');
-            customText = btn.dataset.btnTemplate.replace('[PRICE]', price);
-          }
-
           this.productForm?.toggleSubmitButton(
             html.getElementById(`ProductSubmitButton-${this.sectionId}`)?.hasAttribute('disabled') ?? true,
-            customText ?? (variant?.available ? undefined : window.variantStrings.soldOut)
+            window.variantStrings.soldOut
           );
 
           publish(PUB_SUB_EVENTS.variantChange, {
@@ -253,8 +208,6 @@ if (!customElements.get('product-info')) {
               variant,
             },
           });
-          
-          this.initBeforeAfterButtons();
         };
       }
 
@@ -310,6 +263,7 @@ if (!customElements.get('product-info')) {
           const destinationSet = new Set(mediaGalleryDestinationItems.map(({ dataset }) => dataset.mediaId));
           let shouldRefresh = false;
 
+          // add items from new data not present in DOM
           for (let i = mediaGalleryDestinationItems.length - 1; i >= 0; i--) {
             if (!sourceSet.has(mediaGalleryDestinationItems[i].dataset.mediaId)) {
               mediaGallerySource.prepend(mediaGalleryDestinationItems[i]);
@@ -317,6 +271,7 @@ if (!customElements.get('product-info')) {
             }
           }
 
+          // remove items from DOM not present in new data
           for (let i = 0; i < mediaGallerySourceItems.length; i++) {
             if (!destinationSet.has(mediaGallerySourceItems[i].dataset.mediaId)) {
               mediaGallerySourceItems[i].remove();
@@ -324,8 +279,10 @@ if (!customElements.get('product-info')) {
             }
           }
 
+          // refresh
           if (shouldRefresh) [mediaGallerySourceItems, sourceSet, sourceMap] = refreshSourceData();
 
+          // if media galleries don't match, sort to match new data order
           mediaGalleryDestinationItems.forEach((destinationItem, destinationIndex) => {
             const sourceData = sourceMap.get(destinationItem.dataset.mediaId);
 
@@ -334,16 +291,20 @@ if (!customElements.get('product-info')) {
                 sourceData.item,
                 mediaGallerySource.querySelector(`li:nth-of-type(${destinationIndex + 1})`)
               );
+
+              // refresh source now that it has been modified
               [mediaGallerySourceItems, sourceSet, sourceMap] = refreshSourceData();
             }
           });
         }
 
+        // set featured media as active in the media gallery
         this.querySelector(`media-gallery`)?.setActiveMedia?.(
           `${this.dataset.section}-${variantFeaturedMediaId}`,
           true
         );
 
+        // update media modal
         const modalContent = this.productModal?.querySelector(`.product-media-modal__content`);
         const newModalContent = html.querySelector(`product-modal .product-media-modal__content`);
         if (modalContent && newModalContent) modalContent.innerHTML = newModalContent.innerHTML;
@@ -379,7 +340,7 @@ if (!customElements.get('product-info')) {
         if (!currentVariantId) return;
 
         this.querySelector('.quantity__rules-cart .loading__spinner').classList.remove('hidden');
-        fetch(`${this.dataset.url}?variant=${currentVariantId}&section_id=${this.dataset.section}`)
+        return fetch(`${this.dataset.url}?variant=${currentVariantId}&section_id=${this.dataset.section}`)
           .then((response) => response.text())
           .then((responseText) => {
             const html = new DOMParser().parseFromString(responseText, 'text/html');
@@ -411,6 +372,19 @@ if (!customElements.get('product-info')) {
             }
           } else {
             current.innerHTML = updated.innerHTML;
+            if (selector === '.quantity__label') {
+              const updatedAriaLabelledBy = updated.getAttribute('aria-labelledby');
+              if (updatedAriaLabelledBy) {
+                current.setAttribute('aria-labelledby', updatedAriaLabelledBy);
+                // Update the referenced visually hidden element
+                const labelId = updatedAriaLabelledBy;
+                const currentHiddenLabel = document.getElementById(labelId);
+                const updatedHiddenLabel = html.getElementById(labelId);
+                if (currentHiddenLabel && updatedHiddenLabel) {
+                  currentHiddenLabel.textContent = updatedHiddenLabel.textContent;
+                }
+              }
+            }
           }
         }
       }

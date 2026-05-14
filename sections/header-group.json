@@ -1,68 +1,28 @@
-/*
-* ------------------------------------------------------------
-* IMPORTANT: The contents of this file are auto-generated.
-*
-* This file may be updated by the Shopify admin theme editor
-* or related systems. Please exercise caution as any changes
-* made to this file may be overwritten.
-* ------------------------------------------------------------
-*/
 {
   "name": "t:sections.header.name",
   "type": "header",
   "sections": {
-    "blocky_lys_scrolling_text_bar_GLkKNr": {
-      "type": "blocky-scrolling-text-bar",
-      "blocks": {
-        "text_DiPtyi": {
-          "type": "text",
-          "settings": {
-            "text": "FREE SHIPPING"
-          }
-        },
-        "text_KwnK4Y": {
-          "type": "text",
-          "settings": {
-            "text": "24/7 SUPPORT AVAILABLE"
-          }
-        }
-      },
-      "block_order": [
-        "text_DiPtyi",
-        "text_KwnK4Y"
-      ],
-      "settings": {
-        "text_size": "1.75",
-        "background_color": "#00513D",
-        "text_color": "#FFFFFF",
-        "speed": 1,
-        "text_spacing": 3,
-        "padding_top": 16,
-        "padding_bottom": 16
-      }
-    },
     "header": {
       "type": "header",
       "settings": {
-        "logo_position": "top-center",
-        "menu": "main-menu",
+        "color_scheme": "scheme-1",
+        "menu_color_scheme": "scheme-1",
+        "logo_position": "middle-left",
+        "menu": "",
         "menu_type_desktop": "dropdown",
         "sticky_header_type": "on-scroll-up",
         "show_line_separator": false,
-        "color_scheme": "scheme-1",
-        "menu_color_scheme": "scheme-3",
         "enable_country_selector": true,
-        "enable_language_selector": true,
         "enable_customer_avatar": true,
+        "enable_language_selector": true,
         "mobile_logo_position": "center",
         "margin_bottom": 0,
-        "padding_top": 20,
-        "padding_bottom": 20
+        "padding_top": 36,
+        "padding_bottom": 12
       }
     }
   },
   "order": [
-    "blocky_lys_scrolling_text_bar_GLkKNr",
     "header"
   ]
 }

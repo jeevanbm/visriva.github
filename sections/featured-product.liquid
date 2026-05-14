@@ -1,5 +1,8 @@
 {%- liquid
   assign product = section.settings.product
+  if product == null
+    assign placeholder = true
+  endif
 -%}
 
 <product-info
@@ -69,7 +72,7 @@
     <div class="page-width section-{{ section.id }}-padding{% if section.settings.secondary_background %} isolate{% endif %}">
       <div class="featured-product product product--{{ section.settings.media_size }} grid grid--1-col gradient color-{{ section.settings.color_scheme }} product--{{ section.settings.media_position }}{% if section.settings.secondary_background == false %} isolate{% endif %} {% if product.media.size > 0 or section.settings.product == blank %}grid--2-col-tablet{% else %}product--no-media{% endif %}">
         <div class="grid__item product__media-wrapper">
-          {%- if section.settings.product != blank -%}
+          {%- unless placeholder -%}
             {% render 'product-media-gallery', product: product, variant_images: variant_images, limit: 1 %}
           {%- else -%}
             <div class="product__media-item">
@@ -80,7 +83,7 @@
                 {{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
               </div>
             </div>
-          {%- endif -%}
+          {%- endunless -%}
         </div>
         <div class="product__info-wrapper grid__item{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
           <section
@@ -104,16 +107,17 @@
                   </p>
                 {%- when 'title' -%}
                   <h2 class="product__title {{ block.settings.heading_size }}" {{ block.shopify_attributes }}>
-                    {%- if product.title != blank -%}
+                    {%- unless placeholder -%}
                       {{ product.title | escape }}
                     {%- else -%}
                       {{ 'onboarding.product_title' | t }}
-                    {%- endif -%}
+                    {%- endunless -%}
                   </h2>
                 {%- when 'price' -%}
                   <div id="price-{{ section.id }}" role="status" {{ block.shopify_attributes }}>
                     {%- render 'price',
                       product: product,
+                      placeholder: placeholder,
                       use_variant: true,
                       show_badges: true,
                       price_class: 'price--large'
@@ -138,14 +142,14 @@
                       {%- endif -%}
                     </div>
                   {%- endif -%}
-                  {%- if product != blank -%}
+                  {%- unless placeholder -%}
                     <div {{ block.shopify_attributes }}>
                       {%- form 'product', product -%}
                         <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
                         {{ form | payment_terms }}
                       {%- endform -%}
                     </div>
-                  {%- endif -%}
+                  {%- endunless -%}
                 {%- when 'sku' -%}
                   <p
                     class="product__sku{% if block.settings.text_style == 'uppercase' %} caption-with-letter-spacing{% elsif block.settings.text_style == 'subtitle' %} subtitle{% endif %}{% if product.selected_or_first_available_variant.sku.size == 0 %} visibility-hidden{% endif %}"
@@ -168,9 +172,20 @@
                       | item_count_for_variant: product.selected_or_first_available_variant.id
                     -%}
                     {% # theme-check-enable %}
-                    <label class="quantity__label form__label" for="Quantity-{{ section.id }}">
-                      {{ 'products.product.quantity.label' | t }}
-                      <span class="quantity__rules-cart{% if cart_qty == 0 %} hidden{% endif %}">
+                    <span class="visually-hidden" id="quantity-label-{{ section.id }}">
+                      {%- if cart_qty > 0 -%}
+                        {{- 'products.product.quantity.in_cart_aria_label' | t: quantity: cart_qty -}}
+                      {%- else -%}
+                        {{- 'products.product.quantity.label' | t -}}
+                      {%- endif -%}
+                    </span>
+                    <label
+                      class="quantity__label form__label"
+                      for="Quantity-{{ section.id }}"
+                      aria-labelledby="quantity-label-{{ section.id }}"
+                    >
+                      <span aria-hidden="true">{{ 'products.product.quantity.label' | t }}</span>
+                      <span class="quantity__rules-cart{% if cart_qty == 0 %} hidden{% endif %}" aria-hidden="true">
                         {%- render 'loading-spinner' -%}
                         <span
                           >(
@@ -185,7 +200,9 @@
                           <span class="visually-hidden">
                             {{- 'products.product.quantity.decrease' | t: product: product.title | escape -}}
                           </span>
-                          {% render 'icon-minus' %}
+                          <span class="svg-wrapper">
+                            {{- 'icon-minus.svg' | inline_asset_content -}}
+                          </span>
                         </button>
                         <input
                           class="quantity__input"
@@ -207,7 +224,9 @@
                           <span class="visually-hidden">
                             {{- 'products.product.quantity.increase' | t: product: product.title | escape -}}
                           </span>
-                          {% render 'icon-plus' %}
+                          <span class="svg-wrapper">
+                            {{- 'icon-plus.svg' | inline_asset_content -}}
+                          </span>
                         </button>
                       </quantity-input>
                       {%- liquid
@@ -243,7 +262,7 @@
                                   | money_with_currency
                                 -%}
                                 <span class="price-per-item--current">
-                                  {{- 'products.product.volume_pricing.price_at_each' | t: price: variant_price -}}
+                                  {{- 'products.product.volume_pricing.price_at_each_html' | t: price: variant_price -}}
                                 </span>
                               {%- else -%}
                                 {%- for price_break in volume_pricing_array -%}
@@ -251,7 +270,7 @@
                                     {%- assign price_break_price = price_break.price | money_with_currency -%}
                                     <span class="price-per-item--current">
                                       {{-
-                                        'products.product.volume_pricing.price_at_each'
+                                        'products.product.volume_pricing.price_at_each_html'
                                         | t: price: price_break_price
                                       -}}
                                     </span>
@@ -281,13 +300,16 @@
                                   </dt>
                                   <dd>
                                     <span class="price-per-item--current">
-                                      {{- 'products.product.volume_pricing.price_at_each' | t: price: variant_price -}}
+                                      {{-
+                                        'products.product.volume_pricing.price_at_each_html'
+                                        | t: price: variant_price
+                                      -}}
                                     </span>
                                   </dd>
                                 </dl>
                               {%- else -%}
                                 <span class="price-per-item--current">
-                                  {{- 'products.product.volume_pricing.price_at_each' | t: price: variant_price -}}
+                                  {{- 'products.product.volume_pricing.price_at_each_html' | t: price: variant_price -}}
                                 </span>
                               {%- endif -%}
                             </div>
@@ -331,7 +353,7 @@
                               {%- assign price = product.selected_or_first_available_variant.price
                                 | money_with_currency
                               -%}
-                              <span data-text="{{ 'products.product.volume_pricing.price_at_each' | t: price: variant_price }}">
+                              <span data-text="{{ 'products.product.volume_pricing.price_at_each_html' | t: price: variant_price }}">
                                 {{ 'sections.quick_order_list.each' | t: money: price -}}
                               </span>
                             </li>
@@ -343,7 +365,7 @@
                                   <span aria-hidden="true">+</span></span
                                 >
                                 {%- assign price = price_break.price | money_with_currency -%}
-                                <span data-text="{{ 'products.product.volume_pricing.price_at_each' | t: price: price_break_price }}">
+                                <span data-text="{{ 'products.product.volume_pricing.price_at_each_html' | t: price: price_break_price }}">
                                   {{ 'sections.quick_order_list.each' | t: money: price -}}
                                 </span>
                               </li>
@@ -386,7 +408,7 @@
                   -%}
                 {%- when 'custom_liquid' -%}
                   {{ block.settings.custom_liquid }}
-                {%- when 'rating-app' -%}
+                {%- when 'rating' -%}
                   {%- if product.metafields.reviews.rating.value != blank -%}
                     <div class="rating-wrapper">
                       {% liquid
@@ -426,13 +448,6 @@
                   {%- endif -%}
                 {%- when 'icon-with-text' -%}
                   {% render 'icon-with-text', block: block %}
-                {%- when 'product_reviews' -%}
-                  {{ 'blocky-lys-product-reviews.css' | asset_url | stylesheet_tag }}
-                  {% render 'blocky-lys-product-reviews', block: block %}
-                {%- when 'review-stars' -%}
-                  {% render 'blocky-lys-review-stars', block: block %}
-                {%- when 'shipping-checkpoints' -%}
-                  {% render 'blocky-lys-shipping-checkpoints', block: block %}
               {%- endcase -%}
             {%- endfor -%}
             <a
@@ -444,7 +459,7 @@
               class="link product__view-details animate-arrow"
             >
               {{ 'products.product.view_full_details' | t }}
-              {% render 'icon-arrow' %}
+              {{- 'icon-arrow.svg' | inline_asset_content -}}
             </a>
           </section>
         </div>
@@ -677,14 +692,6 @@
           "id": "share_label",
           "label": "t:sections.featured-product.blocks.share.settings.text.label",
           "default": "t:sections.featured-product.blocks.share.settings.text.default"
-        },
-        {
-          "type": "paragraph",
-          "content": "t:sections.featured-product.blocks.share.settings.featured_image_info.content"
-        },
-        {
-          "type": "paragraph",
-          "content": "t:sections.featured-product.blocks.share.settings.title_info.content"
         }
       ]
     },
@@ -701,8 +708,8 @@
       ]
     },
     {
-      "type": "rating-app",
-      "name": "Product Rating App",
+      "type": "rating",
+      "name": "t:sections.featured-product.blocks.rating.name",
       "limit": 1,
       "settings": [
         {
@@ -1325,546 +1332,7 @@
           "info": "t:sections.main-product.blocks.icon_with_text.settings.heading.info"
         }
       ]
-    },
-    {
-      "name": "Product Reviews",
-      "type": "product_reviews",
-      "limit": 1,
-      "settings": [
-        {
-          "type": "header",
-          "content": "Reviews"
-        },
-        {
-          "type": "checkbox",
-          "id": "show_placeholder_image",
-          "label": "Show placeholder image",
-          "info": "This will show a placeholder image for the reviewers if there is no image",
-          "default": true
-        },
-        {
-          "type": "inline_richtext",
-          "id": "reviewer_1",
-          "label": "Reviewer 1",
-          "default": "<em>Reviewer 1</em>"
-        },
-        {
-          "type": "richtext",
-          "id": "text_1",
-          "label": "Text 1",
-          "default": "<p>Show what your customers had to say about their experience.</p>"
-        },
-        {
-          "type": "image_picker",
-          "id": "image_1",
-          "label": "Reviewer Image 1"
-        },
-        {
-          "type": "inline_richtext",
-          "id": "reviewer_2",
-          "label": "Reviewer 2",
-          "default": "<em>Reviewer 2</em>"
-        },
-        {
-          "type": "richtext",
-          "id": "text_2",
-          "label": "Text 2",
-          "default": "<p>Show what your customers had to say about their experience.</p>"
-        },
-        {
-          "type": "image_picker",
-          "id": "image_2",
-          "label": "Reviewer Image 2"
-        },
-        {
-          "type": "inline_richtext",
-          "id": "reviewer_3",
-          "label": "Reviewer 3",
-          "default": "<em>Reviewer 3</em>"
-        },
-        {
-          "type": "richtext",
-          "id": "text_3",
-          "label": "Text 3",
-          "default": "<p>Show what your customers had to say about their experience.</p>"
-        },
-        {
-          "type": "image_picker",
-          "id": "image_3",
-          "label": "Reviewer Image 3"
-        },
-
-
-
-        {
-          "type": "header",
-          "content": "Text"
-        },
-        {
-          "type": "color",
-          "id": "text_color",
-          "default": "#000000",
-          "label": "Color Scheme",
-          "info": "This changes the text and button colors"
-        },
-        {
-          "type": "select",
-          "id": "text_alignment",
-          "default": "center",
-          "label": "Text Alignment",
-          "options": [
-            {
-              "value": "left",
-              "label": "Left"
-            },
-            {
-              "value": "center",
-              "label": "Center"
-            },
-            {
-              "value": "right",
-              "label": "Right"
-            }
-          ]
-        },
-        {   
-          "type": "range",
-          "id": "text_size",
-          "min": 10,
-          "max": 30,
-          "step": 1,
-          "unit": "px",
-          "label": "Text Size",
-          "default": 18
-        },
-
-
-
-        {
-          "type": "header",
-          "content": "Stars"
-        },
-        {
-          "type": "checkbox",
-          "id": "display_stars",
-          "label": "Display Star Ratings",
-          "default": true
-        },
-        {
-          "type": "color",
-          "id": "star_color",
-          "default": "#FFCC00",
-          "label": "Stars color"
-        },
-        {   
-          "type": "range",
-          "id": "star_size",
-          "min": 0,
-          "max": 25,
-          "step": 1,
-          "unit": "px",
-          "label": "Star and Reviewer Size",
-          "default": 16
-        },
-        {
-          "type": "select",
-          "id": "star_placement",
-          "options": [
-          {
-            "value": "above",
-            "label": "Above Reviewer"
-          },
-          {
-            "value": "below",
-            "label": "Below Reviewer"
-          }
-          ],
-          "label": "Star Placement",
-          "default": "below"
-        },
-
-
-
- 
-        {
-          "type": "header",
-          "content": "Image"
-        },
-        {
-          "type": "select",
-          "id": "image_shape",
-          "options": [
-          {
-            "value": "circle",
-            "label": "Circle"
-          },
-          {
-            "value": "square",
-            "label": "Square"
-          },
-          {
-            "value": "rectangle",
-            "label": "Rectangle"
-          }
-          ],
-          "label": "Image shape",
-          "default": "rectangle"
-        },
-        {   
-          "type": "range",
-          "id": "image_size",
-          "min": 50,
-          "max": 150,
-          "step": 1,
-          "unit": "px",
-          "label": "Image Size",
-          "default": 100
-        },
-
-        {
-          "type": "header",
-          "content": "Layout"
-        },
-        {
-          "type": "checkbox",
-          "id": "show_card",
-          "label": "Display in card",
-          "info": "Show your reviews in a container",
-          "default": true
-        },
-        {
-          "type": "color",
-          "id": "background_color",
-          "default": "#FFFFFF",
-          "label": "Background color"
-        },
-        {
-          "type": "checkbox",
-          "id": "auto_scroll",
-          "label": "Auto Scroll",
-          "info": "Click Save to turn on the auto scrolling",
-          "default": true
-        }
-
-      ]
-    },
-    {
-      "type": "review-stars",
-      "name": "Review Stars",
-      "limit": 1,
-      "settings": [
-         {
-          "type": "range",
-          "id": "rating",
-          "label": "Rating",
-          "min": 0,
-          "max": 5,
-          "step": 0.1,
-          "default": 5,
-          "info": "Set the rating to 0 to hide the stars"
-        },
-        {
-          "type": "color",
-          "id": "star_color",
-          "default": "#ffcc00",
-          "label": "Stars color"
-        },
-        {
-          "type": "color",
-          "id": "review_text_color",
-          "label": "Review text color",
-          "default": "#000000"
-        },
-    
-        {
-          "type": "select",
-          "id": "empty_stars_style",
-          "options": [
-            {
-              "value": "outlined",
-              "label": "Outlined"
-            },
-            {
-              "value": "hidden",
-              "label": "Hidden"
-            }
-          ],
-          "label": "Empty stars style",
-          "default": "hidden"
-        },
-        {
-          "type": "inline_richtext",
-          "id": "review_text",
-          "label": "Text",
-          "default": "Based on over <b>1000+</b> Reviews"
-        },
-        {
-          "type": "range",
-          "id": "review_font_size",
-          "min": 10,
-          "max": 24,
-          "step": 1,
-          "unit": "px",
-          "default": 16,
-          "label": "Text size"
-        },
-        {
-          "type": "select",
-          "id": "review_alignment",
-          "label": "Review Alignment",
-          "options": [
-            {
-              "value": "flex-start",
-              "label": "Left"
-            },
-            {
-              "value": "center",
-              "label": "Center"
-            },
-            {
-              "value": "flex-end",
-              "label": "Right"
-            }
-          ],
-          "default": "flex-start"
-        }
-      ]
-    },
-    {
-      "type": "shipping-checkpoints",
-      "name": "Shipping checkpoints",
-      "limit": 1,
-      "settings": [
-        {
-          "type": "header",
-          "content": "Checkpoint 1"
-        },
-        {
-          "type": "text",
-          "id": "icon_1",
-          "default": "shopping_cart",
-          "label": "Icon",
-          "info": "Get icon codes from [this link](https://fonts.google.com/icons/). example: 'check_circle', 'search', 'home'. For help adding icons, you can click [here](/admin/apps/blocky-apps/icons)"
-        },
-        {
-          "type": "inline_richtext",
-          "id": "text_1",
-          "label": "Text",
-          "default": "Purchase"
-        },
-        {
-          "type": "number",
-          "id": "start_date_1",
-          "label": "Start Date (Days from Today)",
-          "default": 0
-        },
-        {
-          "type": "number",
-          "id": "end_date_1",
-          "label": "End Date (Days from Today)",
-          "default": 0
-        },
-        {
-          "type": "header",
-          "content": "Checkpoint 2"
-        },
-        {
-          "type": "text",
-          "id": "icon_2",
-          "default": "local_shipping",
-          "label": "Icon",
-          "info": "Get icon codes from [this link](https://fonts.google.com/icons/)."
-        },
-        {
-          "type": "inline_richtext",
-          "id": "text_2",
-          "label": "Text",
-          "default": "Shipped"
-        },
-        {
-          "type": "number",
-          "id": "start_date_2",
-          "label": "Start Date (Days from Today)",
-          "default": 1
-        },
-        {
-          "type": "number",
-          "id": "end_date_2",
-          "label": "End Date (Days from Today)",
-          "default": 2
-        },
- 
-        {
-          "type": "header",
-          "content": "Checkpoint #3"
-        },
-
-        {
-          "type": "text",
-          "id": "icon_3",
-          "default": "shopping_bag",
-          "label": "Icon",
-          "info": "Get icon codes from [this link](https://fonts.google.com/icons/)."
-        },
-        {
-          "type": "inline_richtext",
-          "id": "text_3",
-          "label": "Text",
-          "default": "Delivered"
-        },
-        {
-          "type": "number",
-          "id": "start_date_3",
-          "label": "Start Date (Days from Today)",
-          "default": 10
-        },
-        {
-          "type": "number",
-          "id": "end_date_3",
-          "label": "End Date (Days from Today)",
-          "default": 12
-        },
- 
-        {
-          "type": "header",
-          "content": "Checkpoint #4"
-        },
-        
-        {
-          "type": "text",
-          "id": "icon_4",
-          "label": "Icon",
-          "info": "Get icon codes from [this link](https://fonts.google.com/icons/)."
-        },
-        {
-          "type": "inline_richtext",
-          "id": "text_4",
-          "label": "Text",
-        },
-        {
-          "type": "number",
-          "id": "start_date_4",
-          "label": "Start Date (Days from Today)",
-        },
-        {
-          "type": "number",
-          "id": "end_date_4",
-          "label": "End Date (Days from Today)",
-        },
-        
-        
-        {
-          "type": "header",
-          "content": "Date formating"
-        },
-        {
-          "type": "select",
-          "id": "date_format",
-          "label": "Date format",
-          "options": [
-            {
-              "value": "day, month, %e",
-              "label": "Monday, January 1"
-            },
-            {
-              "value": "day, %e. month",
-              "label": "Monday, 1. January"
-            },
-            {
-              "value": "month %e",
-              "label": "January 1"
-            },
-            {
-              "value": "%e. month",
-              "label": "1. January"
-            }
-          ],
-          "default": "month %e"
-        },
-        {
-          "type": "select",
-          "id": "day_label",
-          "label": "Day labels",
-          "default": "%a",
-          "options": [
-            { "value": "%a" , "label": "Mon"},
-            { "value": "%A" , "label": "Monday"}          
-          ]
-        },
-        {
-          "type": "select",
-          "id": "month_label",
-          "label": "Month labels",
-          "default": "%b",
-          "options": [
-            { "value": "%b" , "label": "Jan"},
-            { "value": "%B" , "label": "January"}          
-          ]
-        },
-        {
-          "type": "header",
-          "content": "Layout"
-        },
-        {
-          "type": "select",
-          "id": "date_placement",
-          "options": [
-            {
-              "value": "col",
-              "label": "Above Text"
-            },
-            {
-              "value": "col-reverse",
-              "label": "Below text"
-            },
-          ],
-          "default": "col",
-          "label": "Date placement"
-        },
-        {
-          "type": "color",
-          "id": "icon_color",
-          "default": "#FFFFFF",
-          "label": "Icon color"
-        },
-        {
-          "type": "color",
-          "id": "icon_background_color",
-          "default": "#000000",
-          "label": "Icon background color"
-        },
-        {
-          "type": "select",
-          "id": "icon_size",
-          "options": [
-            {
-              "value": "sm",
-              "label": "Small"
-            },
-            {
-              "value": "md",
-              "label": "Medium"
-            },
-            {
-              "value": "lg",
-              "label": "Large"
-            },            
-          ],
-          "default": "md",
-          "label": "Icon size"
-        },
-        {
-          "type": "range",
-          "id": "text_size",
-          "min": 4,
-          "max": 20,
-          "step": 1,
-          "unit": "px",
-          "default": 12,
-          "label": "Text size"
-        }
-      ]
-    },
+    }
   ],
   "settings": [
     {
@@ -1886,8 +1354,7 @@
     },
     {
       "type": "header",
-      "content": "t:sections.featured-product.settings.header.content",
-      "info": "t:sections.featured-product.settings.header.info"
+      "content": "t:sections.featured-product.settings.header.content"
     },
     {
       "type": "select",
@@ -1907,8 +1374,7 @@
         }
       ],
       "default": "medium",
-      "label": "t:sections.main-product.settings.media_size.label",
-      "info": "t:sections.main-product.settings.media_size.info"
+      "label": "t:sections.main-product.settings.media_size.label"
     },
     {
       "type": "checkbox",
@@ -1946,8 +1412,7 @@
         }
       ],
       "default": "left",
-      "label": "t:sections.featured-product.settings.media_position.label",
-      "info": "t:sections.featured-product.settings.media_position.info"
+      "label": "t:sections.featured-product.settings.media_position.label"
     },
     {
       "type": "select",
@@ -1967,8 +1432,7 @@
         }
       ],
       "default": "lightbox",
-      "label": "t:sections.main-product.settings.image_zoom.label",
-      "info": "t:sections.main-product.settings.image_zoom.info"
+      "label": "t:sections.main-product.settings.image_zoom.label"
     },
     {
       "type": "checkbox",

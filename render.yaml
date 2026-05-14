@@ -17,3 +17,6 @@ services:
         value: 3000
       - key: DRIVE_FOLDER_ID
         value: 0AFbUKkWBimP5Uk9PVA
+      - key: GOOGLE_SERVICE_ACCOUNT
+        sync: false
+        # Add your service account JSON in Render dashboard environment variables

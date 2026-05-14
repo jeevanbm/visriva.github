@@ -6,7 +6,7 @@
 const VisrivaUploader = (function() {
   const CONFIG = {
     // VISRIVA Backend Upload Endpoint
-    UPLOAD_ENDPOINT: 'https://claude-visriva-shopify.onrender.com/api/upload-design',
+    UPLOAD_ENDPOINT: 'https://visriva-upload-service.onrender.com/api/upload-design',
     // For localhost testing:
     // UPLOAD_ENDPOINT: 'http://localhost:3000/api/upload-design',
     MAX_FILE_SIZE: 100 * 1024 * 1024, // 100MB

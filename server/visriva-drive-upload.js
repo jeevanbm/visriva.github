@@ -45,7 +45,8 @@ function initializeDriveClient() {
         console.log('[VISRIVA] Using service account from file');
       } catch (fileError) {
         console.error('[VISRIVA] Failed to load from file:', fileError.message);
-        throw new Error('No valid credentials found');
+        console.warn('[VISRIVA] WARNING: Server will start but upload functionality will not work until GOOGLE_SERVICE_ACCOUNT is configured');
+        return null;
       }
     }
 
@@ -57,7 +58,8 @@ function initializeDriveClient() {
     return google.drive({ version: 'v3', auth });
   } catch (error) {
     console.error('Failed to initialize Google Drive client:', error.message);
-    throw new Error('Google Drive authentication failed: ' + error.message);
+    console.warn('[VISRIVA] WARNING: Google Drive not available. Uploads will fail until credentials are configured.');
+    return null;
   }
 }
 
@@ -72,6 +74,10 @@ function initializeDriveClient() {
 async function uploadToDrive(fileData, fileName, mimeType, metadata = {}) {
   const { Readable } = require('stream');
   const drive = initializeDriveClient();
+
+  if (!drive) {
+    throw new Error('Google Drive not configured. Please set GOOGLE_SERVICE_ACCOUNT environment variable in Render dashboard.');
+  }
 
   // Sanitize filename to prevent Drive issues
   const sanitizedFileName = sanitizeFileName(fileName);

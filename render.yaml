@@ -15,6 +15,5 @@ services:
         value: production
       - key: PORT
         value: 3000
-      # NOTE: Add these env vars in Render Dashboard > Environment > Secrets
-      # GOOGLE_SERVICE_ACCOUNT: (paste entire service account JSON from config file)
-      # DRIVE_FOLDER_ID: 0AFbUKkWBimP5Uk9PVA
+      - key: DRIVE_FOLDER_ID
+        value: 0AFbUKkWBimP5Uk9PVA

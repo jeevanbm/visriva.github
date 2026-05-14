@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mv \"/Users/g1/Desktop/Jeevan Visriva /claude : shopify/blueprint.json\" \"/Users/g1/Desktop/Jeevan Visriva /claude : shopify/blueprint.json.bak\")",
+      "Bash(render svc *)",
+      "Bash(git commit -m ' *)"
+    ],
+    "additionalDirectories": [
+      "/Users/g1/Desktop/Jeevan Visriva /claude : shopify"
+    ]
+  }
+}

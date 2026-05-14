@@ -3608,3 +3608,11 @@ details-disclosure > details {
     transform: translateX(100%) scaleX(0);
   }
 }
+
+body, body.gradient {
+  background-image: url('background-13.png') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+}

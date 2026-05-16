@@ -58,45 +58,37 @@
   <script type="application/json" data-studio-products>
     {
       "tshirt": {
-        {%- assign t_prod = section.settings.tshirt_product -%}
-        {%- if t_prod == blank or t_prod.variants.size == 0 -%}{%- assign t_prod = all_products['bratz-graphic-oversized-t-shirt'] -%}{%- endif -%}
         "label": "T-Shirt",
-        "title": {{ t_prod.title | json | default: '"Select T-Shirt"' }},
+        "title": {{ section.settings.tshirt_product.title | json | default: '"Select T-Shirt"' }},
         "variants": [
-          {%- for variant in t_prod.variants -%}
+          {%- for variant in section.settings.tshirt_product.variants -%}
             {"id":"{{ variant.id }}","title":{{ variant.title | json }},"available":{{ variant.available | json }}}{% unless forloop.last %},{% endunless %}
           {%- endfor -%}
         ]
       },
       "polo": {
-        {%- assign p_prod = section.settings.polo_product -%}
-        {%- if p_prod == blank or p_prod.variants.size == 0 -%}{%- assign p_prod = all_products['certified-lover-boy-oversized-tee'] -%}{%- endif -%}
         "label": "Polo",
-        "title": {{ p_prod.title | json | default: '"Select Polo"' }},
+        "title": {{ section.settings.polo_product.title | json | default: '"Select Polo"' }},
         "variants": [
-          {%- for variant in p_prod.variants -%}
+          {%- for variant in section.settings.polo_product.variants -%}
             {"id":"{{ variant.id }}","title":{{ variant.title | json }},"available":{{ variant.available | json }}}{% unless forloop.last %},{% endunless %}
           {%- endfor -%}
         ]
       },
       "sweatshirt": {
-        {%- assign s_prod = section.settings.sweatshirt_product -%}
-        {%- if s_prod == blank or s_prod.variants.size == 0 -%}{%- assign s_prod = all_products['zariya-addicted-tee'] -%}{%- endif -%}
         "label": "Sweatshirt",
-        "title": {{ s_prod.title | json | default: '"Select Sweatshirt"' }},
+        "title": {{ section.settings.sweatshirt_product.title | json | default: '"Select Sweatshirt"' }},
         "variants": [
-          {%- for variant in s_prod.variants -%}
+          {%- for variant in section.settings.sweatshirt_product.variants -%}
             {"id":"{{ variant.id }}","title":{{ variant.title | json }},"available":{{ variant.available | json }}}{% unless forloop.last %},{% endunless %}
           {%- endfor -%}
         ]
       },
       "hoodie": {
-        {%- assign h_prod = section.settings.hoodie_product -%}
-        {%- if h_prod == blank or h_prod.variants.size == 0 -%}{%- assign h_prod = all_products['zariya-troublemaker-tee-1'] -%}{%- endif -%}
         "label": "Hoodie",
-        "title": {{ h_prod.title | json | default: '"Select Hoodie"' }},
+        "title": {{ section.settings.hoodie_product.title | json | default: '"Select Hoodie"' }},
         "variants": [
-          {%- for variant in h_prod.variants -%}
+          {%- for variant in section.settings.hoodie_product.variants -%}
             {"id":"{{ variant.id }}","title":{{ variant.title | json }},"available":{{ variant.available | json }}}{% unless forloop.last %},{% endunless %}
           {%- endfor -%}
         ]
@@ -135,11 +127,10 @@
       </div>
 
       <form class="studio-v2-form" action="/cart/add" method="post" enctype="multipart/form-data" data-studio-form>
-        {%- assign t_prod = section.settings.tshirt_product -%}
-        {%- if t_prod == blank or t_prod.variants.size == 0 -%}{%- assign t_prod = all_products['bratz-graphic-oversized-t-shirt'] -%}{%- endif -%}
-        <input type="hidden" name="id" value="{{ t_prod.variants.first.id }}" data-studio-variant-id>
         
-        <input type="hidden" name="properties[Size]" value="{{ t_prod.variants.first.title }}" data-studio-size-property>
+          <input type="hidden" name="id" value="47212533547200" data-studio-variant-id>
+        
+        <input type="hidden" name="properties[Size]" value="" data-studio-size-property>
         <input type="hidden" name="properties[Garment Color]" value="Acid Wash Blue (#828FB2)" data-studio-color-property>
         <input type="hidden" name="properties[Wash Finish]" value="Acid Wash Blue" data-studio-wash-property>
         <input type="hidden" name="properties[Color Source]" value="Acid swatch" data-studio-color-source-property>

@@ -1,0 +1,270 @@
+{% schema %}
+{
+  "name": "Superdesign Customizer",
+  "settings": [
+    {
+      "type": "product",
+      "id": "tshirt_product",
+      "label": "T-Shirt Product"
+    },
+    {
+      "type": "product",
+      "id": "polo_product",
+      "label": "Polo Product"
+    },
+    {
+      "type": "product",
+      "id": "sweatshirt_product",
+      "label": "Sweatshirt Product"
+    },
+    {
+      "type": "product",
+      "id": "hoodie_product",
+      "label": "Hoodie Product"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Superdesign Customizer"
+    }
+  ]
+}
+{% endschema %}
+
+<link href="{{ 'zariya-3d.css' | asset_url }}" rel="stylesheet" type="text/css" media="all" />
+
+<section
+  id="superdesign-customizer"
+  class="studio-v2"
+  data-studio-root
+  data-default-color="#828FB2"
+  data-default-color-name="Acid Wash Blue"
+  data-default-wash="acid-blue"
+  data-fixed-price="899"
+  data-currency-symbol="₹"
+  data-model-tshirt-front="https://pub-866993ef9088469599283f550970034a.r2.dev/tshirt-front-texture.png"
+  data-model-tshirt-back="https://pub-866993ef9088469599283f550970034a.r2.dev/tshirt-back-texture.png"
+  data-model-polo-front="https://pub-866993ef9088469599283f550970034a.r2.dev/tshirt-front-texture.png"
+  data-model-polo-back="https://pub-866993ef9088469599283f550970034a.r2.dev/tshirt-back-texture.png"
+  data-model-sweatshirt-front="https://pub-866993ef9088469599283f550970034a.r2.dev/tshirt-front-texture.png"
+  data-model-sweatshirt-back="https://pub-866993ef9088469599283f550970034a.r2.dev/tshirt-back-texture.png"
+  data-model-hoodie-front="https://pub-866993ef9088469599283f550970034a.r2.dev/tshirt-front-texture.png"
+  data-model-hoodie-back="https://pub-866993ef9088469599283f550970034a.r2.dev/tshirt-back-texture.png"
+  data-wash-texture-acid-blue="//zariyaofficial.com/cdn/shop/t/8/assets/acid-wash-blue-texture.png?v=74290999905256627691778058534"
+  data-wash-texture-acid-black="//zariyaofficial.com/cdn/shop/t/8/assets/acid-wash-black-texture.png?v=158913256413279334461778058534"
+  data-wash-texture-acid-green="//zariyaofficial.com/cdn/shop/t/8/assets/acid-wash-green-texture.png?v=28175539542800308561778058534"
+  data-wash-texture-acid-red="//zariyaofficial.com/cdn/shop/t/8/assets/acid-wash-red-texture.png?v=66511948464797756811778058534"
+>
+  <script type="application/json" data-studio-products>
+    {
+      "tshirt": {
+        {%- assign t_prod = section.settings.tshirt_product -%}
+        {%- if t_prod == blank or t_prod.variants.size == 0 -%}{%- assign t_prod = all_products['bratz-graphic-oversized-t-shirt'] -%}{%- endif -%}
+        "label": "T-Shirt",
+        "title": {{ t_prod.title | json | default: '"Select T-Shirt"' }},
+        "variants": [
+          {%- for variant in t_prod.variants -%}
+            {"id":"{{ variant.id }}","title":{{ variant.title | json }},"available":{{ variant.available | json }}}{% unless forloop.last %},{% endunless %}
+          {%- endfor -%}
+        ]
+      },
+      "polo": {
+        {%- assign p_prod = section.settings.polo_product -%}
+        {%- if p_prod == blank or p_prod.variants.size == 0 -%}{%- assign p_prod = all_products['certified-lover-boy-oversized-tee'] -%}{%- endif -%}
+        "label": "Polo",
+        "title": {{ p_prod.title | json | default: '"Select Polo"' }},
+        "variants": [
+          {%- for variant in p_prod.variants -%}
+            {"id":"{{ variant.id }}","title":{{ variant.title | json }},"available":{{ variant.available | json }}}{% unless forloop.last %},{% endunless %}
+          {%- endfor -%}
+        ]
+      },
+      "sweatshirt": {
+        {%- assign s_prod = section.settings.sweatshirt_product -%}
+        {%- if s_prod == blank or s_prod.variants.size == 0 -%}{%- assign s_prod = all_products['zariya-addicted-tee'] -%}{%- endif -%}
+        "label": "Sweatshirt",
+        "title": {{ s_prod.title | json | default: '"Select Sweatshirt"' }},
+        "variants": [
+          {%- for variant in s_prod.variants -%}
+            {"id":"{{ variant.id }}","title":{{ variant.title | json }},"available":{{ variant.available | json }}}{% unless forloop.last %},{% endunless %}
+          {%- endfor -%}
+        ]
+      },
+      "hoodie": {
+        {%- assign h_prod = section.settings.hoodie_product -%}
+        {%- if h_prod == blank or h_prod.variants.size == 0 -%}{%- assign h_prod = all_products['zariya-troublemaker-tee-1'] -%}{%- endif -%}
+        "label": "Hoodie",
+        "title": {{ h_prod.title | json | default: '"Select Hoodie"' }},
+        "variants": [
+          {%- for variant in h_prod.variants -%}
+            {"id":"{{ variant.id }}","title":{{ variant.title | json }},"available":{{ variant.available | json }}}{% unless forloop.last %},{% endunless %}
+          {%- endfor -%}
+        ]
+      }
+    }
+  </script>
+
+  <div class="container studio-v2-shell">
+    <header class="studio-v2-head">
+      <h1>Build your superdesign</h1>
+      <p>Choose garment, size, color and edit your artwork directly on front and back previews.</p>
+    </header>
+
+    <div class="studio-v2-layout">
+      <div class="studio-v2-preview-column">
+        <div class="studio-v2-preview-grid">
+          <article class="studio-v2-preview-card is-active" data-studio-preview-card="front">
+            <h3>Front</h3>
+            <canvas width="440" height="560" data-studio-canvas="front" aria-label="Front preview canvas"></canvas>
+            <p class="studio-v2-model-hint">Click to edit front design</p>
+          </article>
+          <article class="studio-v2-preview-card" data-studio-preview-card="back">
+            <h3>Back</h3>
+            <canvas width="440" height="560" data-studio-canvas="back" aria-label="Back preview canvas"></canvas>
+            <p class="studio-v2-model-hint">Click to edit back design</p>
+          </article>
+        </div>
+
+        <div class="studio-v2-summary" aria-live="polite">
+          <p><span>Garment</span><strong data-studio-garment-readout>T-Shirt</strong></p>
+          <p><span>Size</span><strong data-studio-size-readout>Not selected</strong></p>
+          <p><span>Selected color</span><strong data-studio-color-readout>Acid Wash Blue</strong></p>
+          <p><span>Wash finish</span><strong data-studio-wash-readout>Acid Wash Blue</strong></p>
+          <p><span>Artwork file</span><strong data-studio-file-readout>No file uploaded</strong></p>
+        </div>
+      </div>
+
+      <form class="studio-v2-form" action="/cart/add" method="post" enctype="multipart/form-data" data-studio-form>
+        {%- assign t_prod = section.settings.tshirt_product -%}
+        {%- if t_prod == blank or t_prod.variants.size == 0 -%}{%- assign t_prod = all_products['bratz-graphic-oversized-t-shirt'] -%}{%- endif -%}
+        <input type="hidden" name="id" value="{{ t_prod.variants.first.id }}" data-studio-variant-id>
+        
+        <input type="hidden" name="properties[Size]" value="{{ t_prod.variants.first.title }}" data-studio-size-property>
+        <input type="hidden" name="properties[Garment Color]" value="Acid Wash Blue (#828FB2)" data-studio-color-property>
+        <input type="hidden" name="properties[Wash Finish]" value="Acid Wash Blue" data-studio-wash-property>
+        <input type="hidden" name="properties[Color Source]" value="Acid swatch" data-studio-color-source-property>
+        <input type="hidden" name="properties[Custom Color Hex]" value="" data-studio-custom-color-property>
+        <input type="hidden" name="properties[Print Scale]" value="100%" data-studio-scale-property>
+        <input type="hidden" name="properties[Artwork File Name]" value="" data-studio-artwork-name-property>
+        <input type="hidden" name="properties[Front Artwork Transform]" value="" data-studio-front-transform-property>
+        <input type="hidden" name="properties[Back Artwork Transform]" value="" data-studio-back-transform-property>
+        <input type="hidden" name="properties[Quoted Price]" value="₹899" data-studio-quoted-price-property>
+        <input type="hidden" name="properties[Selected Base Product]" value="90210 HOODIE">
+        <input type="file" name="properties[Front Preview Snapshot]" accept="image/png" class="studio-v2-hidden-input" data-studio-front-shot tabindex="-1" aria-hidden="true">
+        <input type="file" name="properties[Back Preview Snapshot]" accept="image/png" class="studio-v2-hidden-input" data-studio-back-shot tabindex="-1" aria-hidden="true">
+
+        <div class="studio-v2-fieldset">
+          <label class="studio-v2-label" for="studio-garment">Garment type</label>
+          <div class="studio-v2-select-wrap">
+            <select id="studio-garment" name="properties[Garment Type]" data-studio-garment>
+              <option value="tshirt" selected>T-Shirt</option>
+              <option value="polo">Polo</option>
+              <option value="sweatshirt">Sweatshirt</option>
+              <option value="hoodie">Hoodie</option>
+            </select>
+          </div>
+
+          <label class="studio-v2-label" for="studio-size">Size / GSM</label>
+          <div class="studio-v2-select-wrap">
+            <select id="studio-size" data-studio-size></select>
+          </div>
+          <p class="studio-v2-help">Select your preferred size and fabric weight (GSM).</p>
+        </div>
+
+        <div class="studio-v2-fieldset">
+          <label class="studio-v2-label">Acid wash colors</label>
+          <div class="studio-v2-swatches" role="listbox" aria-label="Acid wash color selection">
+            <button type="button" class="studio-v2-swatch is-active" data-studio-swatch data-color="#828FB2" data-color-name="Acid Wash Blue" data-wash="acid-blue" aria-label="Acid Wash Blue">
+              <span class="studio-v2-swatch-chip" style="--swatch-base:#828FB2;--swatch-a:rgba(224,232,250,.55);--swatch-b:rgba(52,63,92,.58);--swatch-c:rgba(151,166,200,.42);"></span>
+              <span class="studio-v2-swatch-name">Acid Wash Blue</span>
+            </button>
+            <button type="button" class="studio-v2-swatch" data-studio-swatch data-color="#1F262A" data-color-name="Washed Black" data-wash="acid-black" aria-label="Washed Black">
+              <span class="studio-v2-swatch-chip" style="--swatch-base:#1F262A;--swatch-a:rgba(237,239,244,.34);--swatch-b:rgba(13,17,20,.66);--swatch-c:rgba(151,158,171,.3);"></span>
+              <span class="studio-v2-swatch-name">Washed Black</span>
+            </button>
+            <button type="button" class="studio-v2-swatch" data-studio-swatch data-color="#1E4D2B" data-color-name="Acid Wash Green" data-wash="acid-green" aria-label="Acid Wash Green">
+              <span class="studio-v2-swatch-chip" style="--swatch-base:#1E4D2B;--swatch-a:rgba(190,224,198,.42);--swatch-b:rgba(16,36,22,.52);--swatch-c:rgba(96,139,110,.32);"></span>
+              <span class="studio-v2-swatch-name">Acid Wash Green</span>
+            </button>
+            <button type="button" class="studio-v2-swatch" data-studio-swatch data-color="#DB6A6C" data-color-name="Acid Wash Red" data-wash="acid-red" aria-label="Acid Wash Red">
+              <span class="studio-v2-swatch-chip" style="--swatch-base:#DB6A6C;--swatch-a:rgba(255,222,222,.52);--swatch-b:rgba(126,40,46,.54);--swatch-c:rgba(235,157,159,.38);"></span>
+              <span class="studio-v2-swatch-name">Acid Wash Red</span>
+            </button>
+            <button type="button" class="studio-v2-swatch" data-studio-swatch data-color="#111111" data-color-name="Onyx Solid" data-wash="solid" aria-label="Onyx Solid">
+              <span class="studio-v2-swatch-chip" style="--swatch-base:#111111;--swatch-a:rgba(255,255,255,.2);--swatch-b:rgba(10,10,10,.35);--swatch-c:rgba(0,0,0,.1);"></span>
+              <span class="studio-v2-swatch-name">Onyx Solid</span>
+            </button>
+            <button type="button" class="studio-v2-swatch" data-studio-swatch data-color="#EFEDE8" data-color-name="Ivory Solid" data-wash="solid" aria-label="Ivory Solid">
+              <span class="studio-v2-swatch-chip" style="--swatch-base:#EFEDE8;--swatch-a:rgba(255,255,255,.65);--swatch-b:rgba(215,211,202,.45);--swatch-c:rgba(227,221,209,.3);"></span>
+              <span class="studio-v2-swatch-name">Ivory Solid</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="studio-v2-fieldset">
+          <label class="studio-v2-label">Custom color</label>
+          <div class="studio-v2-custom-color-row">
+            <input type="color" value="#828FB2" data-studio-custom-color-picker aria-label="Select custom color">
+            <input type="text" value="#828FB2" maxlength="7" data-studio-custom-color-hex aria-label="Custom color hex">
+            <button type="button" class="studio-v2-small-button" data-studio-custom-color-apply>Apply</button>
+          </div>
+          <p class="studio-v2-help">Use this for any exact color beyond acid wash swatches.</p>
+        </div>
+
+        <div class="studio-v2-fieldset">
+          <label class="studio-v2-label" for="studio-upload">Upload artwork</label>
+          <input id="studio-upload" class="studio-v2-native-upload" type="file" name="properties[Uploaded Artwork]" data-studio-upload accept="image/png,image/jpeg,image/webp" required>
+          <div class="studio-v2-upload-row">
+            <button type="button" class="studio-v2-small-button studio-v2-upload-trigger" data-studio-upload-trigger>Choose artwork</button>
+            <span class="studio-v2-upload-name" data-studio-upload-name>No file selected</span>
+          </div>
+          <p class="studio-v2-help">Uploaded file is attached to the order for admin.</p>
+        </div>
+
+        <div class="studio-v2-fieldset">
+          <label class="studio-v2-label" for="studio-placement">Artwork placement</label>
+          <div class="studio-v2-select-wrap">
+            <select id="studio-placement" name="properties[Artwork Placement]" data-studio-placement>
+              <option value="front">Front only</option>
+              <option value="back">Back only</option>
+              <option value="both" selected>Front and back</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="studio-v2-fieldset">
+          <label class="studio-v2-label">Edit on model (Canva style)</label>
+          <div class="studio-v2-edit-tabs">
+            <button type="button" class="studio-v2-edit-tab is-active" data-studio-edit-side="front">Edit front</button>
+            <button type="button" class="studio-v2-edit-tab" data-studio-edit-side="back">Edit back</button>
+          </div>
+          <p class="studio-v2-help">Drag artwork directly on preview to move. Drag the corner handle to scale.</p>
+
+          <button type="button" class="studio-v2-small-button" data-studio-reset-side>Reset active side</button>
+        </div>
+
+        <div class="studio-v2-fieldset">
+          <label class="studio-v2-label" for="studio-notes">Customization notes</label>
+          <textarea id="studio-notes" name="properties[Customization Notes]" rows="4" placeholder="Anything extra we should know about your design?"></textarea>
+        </div>
+
+        <p class="studio-v2-help">Front and back snapshots are generated automatically and attached to your order for admin.</p>
+        <p class="studio-v2-status" data-studio-status aria-live="polite"></p>
+
+        <button
+          type="submit"
+          class="button button-solid studio-v2-submit"
+          data-studio-submit
+          
+        >
+          Add to cart - <span data-studio-price>₹899</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsrsasign/10.9.0/jsrsasign-all-min.js" defer></script>
+<script src="{{ 'drive-upload.js' | asset_url }}" defer></script>
+<script src="{{ 'zariya-app.js' | asset_url }}" defer></script>
+<script src="{{ 'zariya-3d.js' | asset_url }}" defer></script>

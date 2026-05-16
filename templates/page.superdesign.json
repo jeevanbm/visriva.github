@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "superdesign": {
+      "type": "superdesign",
+      "settings": {}
+    }
+  },
+  "order": [
+    "superdesign"
+  ]
+}

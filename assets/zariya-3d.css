@@ -1,0 +1,234 @@
+/*
+ * VISRIVA - 3D Customizer Global Styles
+ * Core Design System & UI Components
+ * ------------------------------------------------------------
+ */
+
+:root {
+  --primary: #121212;
+  --secondary: #f5f5f5;
+  --accent: #c41e3a;
+  --gold: #c9a962;
+  --text: #1a1a1a;
+  --muted: #666666;
+  --border: #e3e3e3;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --font-display: "Playfair Display", serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 12px 24px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 24px 48px rgba(0, 0, 0, 0.12);
+}
+
+/* -- 1. BASE STYLES ----------------------------------------- */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--text);
+  background-color: #0a0a0a;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* -- 2. TYPOGRAPHY ----------------------------------------- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 1rem;
+}
+
+.text-gold { color: var(--gold); }
+.text-muted { color: var(--muted); }
+
+/* -- 3. BUTTONS -------------------------------------------- */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 28px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  cursor: pointer;
+  border: none;
+  font-family: var(--font-body);
+  gap: 10px;
+}
+
+.button-solid {
+  background-color: var(--primary);
+  color: #fff;
+}
+
+.button-solid:hover {
+  background-color: #333;
+  transform: translateY(-2px);
+}
+
+.button-gold {
+  background-color: var(--gold);
+  color: #000;
+}
+
+.button-gold:hover {
+  background-color: #b89a55;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(201, 169, 98, 0.2);
+}
+
+/* -- 4. CURSOR --------------------------------------------- */
+.z3d-cursor-dot {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.1s;
+}
+
+.z3d-cursor-ring {
+  position: fixed;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(201, 169, 98, 0.4);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s, border-color 0.3s, transform 0.15s;
+}
+
+.z3d-cursor-ring.z3d-hover {
+  width: 50px;
+  height: 50px;
+  border-color: var(--gold);
+  background: rgba(201, 169, 98, 0.1);
+}
+
+/* -- 5. REVEAL ANIMATIONS ----------------------------------- */
+.z3d-reveal {
+  opacity: 0;
+  transition: all 1s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.z3d-on.z3d-reveal { opacity: 1; }
+
+.z3d-fade-up { transform: translateY(40px); }
+.z3d-on.z3d-fade-up { transform: translateY(0); }
+
+.z3d-slide-left { transform: translateX(-60px); }
+.z3d-on.z3d-slide-left { transform: translateX(0); }
+
+.z3d-slide-right { transform: translateX(60px); }
+.z3d-on.z3d-slide-right { transform: translateX(0); }
+
+.z3d-scale-up { transform: scale(0.9); }
+.z3d-on.z3d-scale-up { transform: scale(1); }
+
+.z3d-flip-up { transform: perspective(1000px) rotateX(-30deg); transform-origin: top; }
+.z3d-on.z3d-flip-up { transform: rotateX(0); }
+
+/* -- 6. GLARE EFFECT --------------------------------------- */
+.visriva-glare {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.4s;
+  background: linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+}
+
+/* -- 7. GLASSMORPHISM -------------------------------------- */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* -- 8. CARDS & GRIDS -------------------------------------- */
+.card-shine-sweep {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+  transform: skewX(-25deg);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.product-card:hover .card-shine-sweep {
+  animation: shine-sweep 0.8s ease-in-out;
+}
+
+@keyframes shine-sweep {
+  from { left: -100%; }
+  to { left: 200%; }
+}
+
+/* -- 9. UTILITIES ------------------------------------------ */
+.hidden { display: none !important; }
+.v-hidden { visibility: hidden; }
+
+/* -- 10. STUDIO V2 OVERRIDES ------------------------------- */
+.studio-v2 {
+  --swatch-base: #828FB2;
+  --swatch-a: rgba(224,232,250,.55);
+  --swatch-b: rgba(52,63,92,.58);
+  --swatch-c: rgba(151,166,200,.42);
+}
+
+.studio-v2-preview-card.is-active {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(201, 169, 98, 0.2);
+}
+
+.studio-v2-swatch.is-active {
+  border-color: var(--gold);
+  background: rgba(201, 169, 98, 0.05);
+}
+
+.studio-v2-submit {
+  background-color: var(--primary);
+  border-radius: 12px;
+  height: 54px;
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+}
+
+.studio-v2-submit:hover {
+  background-color: #000;
+  transform: scale(1.02);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #111; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #444; }
+
+/* -- 11. REBRANDING REFINEMENTS --------------------------- */
+/* Ensuring all Zariya references are handled via Visriva classes */
+.zariya-glare { @extend .visriva-glare; }

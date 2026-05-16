@@ -208,6 +208,9 @@
           </localization-form>
         {%- endif -%}
       </div>
+      <a href="/pages/customizer" class="header__icon link focus-inset">
+        <img src="{{ 'images.png' | asset_url }}" alt="Customizer" width="24" height="24" style="object-fit: contain;">
+      </a>
       {% render 'header-search', input_id: 'Search-In-Modal' %}
 
       {%- if shop.customer_accounts_enabled -%}
